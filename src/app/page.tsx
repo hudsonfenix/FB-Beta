@@ -202,7 +202,27 @@ const HowItWorksSection = () => (
           <TabsContent value="agenciador">
              <Card>
               <CardContent className="space-y-2 p-6">
-                <p className="text-muted-foreground">Funcionalidades para agenciadores em breve. Fique de olho nas novidades!</p>
+                <div className="flex items-start gap-4">
+                    <div className="bg-primary/10 text-primary p-3 rounded-full"><Briefcase className="h-6 w-6" /></div>
+                    <div>
+                        <h4 className="font-bold">1. Cadastre-se</h4>
+                        <p className="text-sm text-muted-foreground">Crie sua conta de agenciador para ter acesso à nossa rede de transportadoras e motoristas.</p>
+                    </div>
+                </div>
+                 <div className="flex items-start gap-4">
+                    <div className="bg-primary/10 text-primary p-3 rounded-full"><FileText className="h-6 w-6" /></div>
+                    <div>
+                        <h4 className="font-bold">2. Gerencie Fretes</h4>
+                        <p className="text-sm text-muted-foreground">Publique fretes em nome de transportadoras ou encontre as melhores cargas para seus motoristas.</p>
+                    </div>
+                </div>
+                 <div className="flex items-start gap-4">
+                    <div className="bg-primary/10 text-primary p-3 rounded-full"><BarChart className="h-6 w-6" /></div>
+                    <div>
+                        <h4 className="font-bold">3. Otimize e Fature</h4>
+                        <p className="text-sm text-muted-foreground">Utilize nossas ferramentas para otimizar rotas, gerenciar pagamentos e aumentar sua rentabilidade.</p>
+                    </div>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>

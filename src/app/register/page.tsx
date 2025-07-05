@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Building, Truck, ArrowRight } from 'lucide-react'
+import { Building, Truck, ArrowRight, Briefcase } from 'lucide-react'
 import { Logo } from '@/components/logo'
 
 export default function RegisterPage() {
@@ -14,7 +14,7 @@ export default function RegisterPage() {
         <h1 className="text-3xl font-bold font-headline">Crie sua conta na RotaConecta</h1>
         <p className="text-muted-foreground">Escolha seu tipo de perfil para começar.</p>
       </div>
-      <div className="grid md:grid-cols-2 gap-8 w-full max-w-4xl">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl">
         <Card className="hover:shadow-lg transition-shadow">
           <CardHeader>
             <div className="flex items-center gap-4">
@@ -59,6 +59,31 @@ export default function RegisterPage() {
             <Button asChild className="w-full">
               <Link href="/register/driver">
                 Cadastrar como Motorista
+                 <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader>
+             <div className="flex items-center gap-4">
+              <div className="bg-primary/10 text-primary p-3 rounded-lg">
+                <Briefcase className="h-8 w-8" />
+              </div>
+              <div>
+                <CardTitle className="text-2xl">Sou Agenciador</CardTitle>
+                <CardDescription>Quero agenciar fretes e motoristas.</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+             <p className="text-sm text-muted-foreground mb-4">
+                Gerencie fretes, conecte transportadoras a motoristas e otimize suas operações logísticas com nossas ferramentas.
+            </p>
+            <Button asChild className="w-full">
+              <Link href="/register/agent">
+                Cadastrar como Agenciador
                  <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
