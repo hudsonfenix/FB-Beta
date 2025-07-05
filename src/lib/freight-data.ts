@@ -17,6 +17,7 @@ export type Freight = {
   vehicle: string;
   price: string;
   isVip: boolean;
+  postedAt: Date;
   details: {
     bodywork: string;
     species: string;
@@ -57,6 +58,7 @@ export const freights: Freight[] = [
     vehicle: 'Carreta, Carreta LS, Vanderléia, Bitrem, Rodotrem',
     price: 'R$ 210,00 P/ TON C/ PED',
     isVip: true,
+    postedAt: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago
     details: {
       bodywork: 'Graneleiro',
       species: 'Big Bag',
@@ -94,6 +96,7 @@ export const freights: Freight[] = [
     vehicle: 'Truck',
     price: 'R$ 1.800,00',
     isVip: false,
+    postedAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
     details: {
       bodywork: 'Baú',
       species: 'Paletizado',
@@ -132,6 +135,7 @@ export const freights: Freight[] = [
     vehicle: 'Bitrem',
     price: 'R$ 4.200,00',
     isVip: true,
+    postedAt: new Date(Date.now() - 90 * 60 * 1000), // 90 minutes ago (unlocked)
     details: {
       bodywork: 'Graneleiro',
       species: 'Saca',
@@ -167,6 +171,7 @@ export const freights: Freight[] = [
     vehicle: 'Toco',
     price: 'R$ 800,00',
     isVip: false,
+    postedAt: new Date(Date.now() - 5 * 60 * 60 * 1000),
     details: {
       bodywork: 'Sider',
       species: 'Caixas',
@@ -202,6 +207,7 @@ export const freights: Freight[] = [
     vehicle: 'Carreta LS',
     price: 'R$ 3.100,00',
     isVip: false,
+    postedAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
     details: {
       bodywork: 'Baú Frigorifico',
       species: 'Congelados',
@@ -237,6 +243,7 @@ export const freights: Freight[] = [
     vehicle: 'Vanderleia',
     price: 'R$ 5.500,00',
     isVip: true,
+    postedAt: new Date(Date.now() - 10 * 60 * 1000), // 10 minutes ago
     details: {
       bodywork: 'Plataforma',
       species: 'Container',

@@ -1,10 +1,10 @@
-import Link from "next/link";
+'use client'
+
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Star, ArrowRight } from "lucide-react";
+import { Star } from "lucide-react";
 import { freights } from "@/lib/freight-data";
+import { FreightTableRow } from "./freight-table-row";
 
 export default function FreightsPage() {
   return (
@@ -33,25 +33,7 @@ export default function FreightsPage() {
             </TableHeader>
             <TableBody>
               {freights.map((freight) => (
-                <TableRow key={freight.id}>
-                  <TableCell className="font-medium">{freight.origin}</TableCell>
-                  <TableCell>{freight.destination}</TableCell>
-                  <TableCell>{freight.vehicle}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                       {freight.price}
-                       {freight.isVip && <Badge className="bg-accent text-accent-foreground hover:bg-accent/80">VIP</Badge>}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="outline" size="sm" asChild>
-                      <Link href={`/dashboard/freights/${freight.id}`}>
-                        Ver Detalhes
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Link>
-                    </Button>
-                  </TableCell>
-                </TableRow>
+                <FreightTableRow key={freight.id} freight={freight} />
               ))}
             </TableBody>
           </Table>
