@@ -15,7 +15,7 @@ export default function RegisterPage() {
         <p className="text-muted-foreground">Escolha seu tipo de perfil para começar.</p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl">
-        <Card className="hover:shadow-lg transition-shadow">
+        <Card className="hover:shadow-lg transition-shadow flex flex-col">
           <CardHeader>
             <div className="flex items-center gap-4">
               <div className="bg-primary/10 text-primary p-3 rounded-lg">
@@ -27,11 +27,11 @@ export default function RegisterPage() {
               </div>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex flex-col flex-1">
             <p className="text-sm text-muted-foreground mb-4">
                 Anuncie suas cargas para milhares de motoristas qualificados, negocie fretes e acompanhe suas entregas em tempo real.
             </p>
-            <Button asChild className="w-full">
+            <Button asChild className="w-full mt-auto">
               <Link href="/register/company">
                 Cadastrar Empresa
                 <ArrowRight className="ml-2 h-4 w-4" />
@@ -40,7 +40,7 @@ export default function RegisterPage() {
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-lg transition-shadow">
+        <Card className="hover:shadow-lg transition-shadow flex flex-col">
           <CardHeader>
              <div className="flex items-center gap-4">
               <div className="bg-primary/10 text-primary p-3 rounded-lg">
@@ -52,11 +52,11 @@ export default function RegisterPage() {
               </div>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex flex-col flex-1">
              <p className="text-sm text-muted-foreground mb-4">
                 Acesse fretes de todo o Brasil, filtre por tipo de veículo e carroceria, e aumente seus lucros com a RotaConecta.
             </p>
-            <Button asChild className="w-full">
+            <Button asChild className="w-full mt-auto">
               <Link href="/register/driver">
                 Cadastrar como Motorista
                  <ArrowRight className="ml-2 h-4 w-4" />
@@ -65,7 +65,7 @@ export default function RegisterPage() {
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-lg transition-shadow">
+        <Card className="hover:shadow-lg transition-shadow flex flex-col">
           <CardHeader>
              <div className="flex items-center gap-4">
               <div className="bg-primary/10 text-primary p-3 rounded-lg">
@@ -77,11 +77,11 @@ export default function RegisterPage() {
               </div>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex flex-col flex-1">
              <p className="text-sm text-muted-foreground mb-4">
                 Gerencie fretes, conecte transportadoras a motoristas e otimize suas operações logísticas com nossas ferramentas.
             </p>
-            <Button asChild className="w-full">
+            <Button asChild className="w-full mt-auto">
               <Link href="/register/agent">
                 Cadastrar como Agenciador
                  <ArrowRight className="ml-2 h-4 w-4" />
