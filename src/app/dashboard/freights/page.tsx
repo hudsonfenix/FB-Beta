@@ -1,17 +1,10 @@
+import Link from "next/link";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Star, ArrowRight } from "lucide-react";
-
-const freights = [
-  { id: 1, origin: 'São Paulo, SP', destination: 'Rio de Janeiro, RJ', vehicle: 'Carreta', price: 'R$ 2.500,00', isVip: true },
-  { id: 2, origin: 'Curitiba, PR', destination: 'Porto Alegre, RS', vehicle: 'Truck', price: 'R$ 1.800,00', isVip: false },
-  { id: 3, origin: 'Belo Horizonte, MG', destination: 'Salvador, BA', vehicle: 'Bitrem', price: 'R$ 4.200,00', isVip: true },
-  { id: 4, origin: 'Goiânia, GO', destination: 'Brasília, DF', vehicle: 'Toco', price: 'R$ 800,00', isVip: false },
-  { id: 5, origin: 'Recife, PE', destination: 'Fortaleza, CE', vehicle: 'Carreta LS', price: 'R$ 3.100,00', isVip: false },
-  { id: 6, origin: 'Manaus, AM', destination: 'Belém, PA', vehicle: 'Vanderleia', price: 'R$ 5.500,00', isVip: true },
-];
+import { freights } from "@/lib/freight-data";
 
 export default function FreightsPage() {
   return (
@@ -51,9 +44,11 @@ export default function FreightsPage() {
                     </div>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button variant="outline" size="sm">
-                      Ver Detalhes
-                      <ArrowRight className="ml-2 h-4 w-4" />
+                    <Button variant="outline" size="sm" asChild>
+                      <Link href={`/dashboard/freights/${freight.id}`}>
+                        Ver Detalhes
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Link>
                     </Button>
                   </TableCell>
                 </TableRow>
