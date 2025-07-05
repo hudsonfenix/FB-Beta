@@ -144,7 +144,7 @@ export default function CostCalculatorPage() {
             <Card className="bg-card">
               <CardHeader>
                 <CardTitle>Análise de Custo e Rentabilidade</CardTitle>
-                <CardDescription>Resultado gerado pela IA da RotaConecta.</CardDescription>
+                <CardDescription>Resultado gerado pela IA da FretesBrasil.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

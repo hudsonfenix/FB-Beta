@@ -50,7 +50,7 @@ const HeroSection = () => (
             Conectamos sua carga aos melhores motoristas, com segurança e eficiência.
           </p>
           <div className="flex flex-col gap-2 min-[400px]:flex-row">
-            <Button size="lg" asChild className="bg-accent text-accent-foreground hover:bg-accent/90">
+            <Button size="lg" asChild>
               <Link href="/dashboard/freights">
                 Ver todos os fretes
                 <ArrowRight className="ml-2 h-4 w-4" />
@@ -133,7 +133,7 @@ const HowItWorksSection = () => (
   <section className="w-full py-12 md:py-24 lg:py-32">
     <div className="container mx-auto px-4 md:px-6">
       <div className="flex flex-col items-center justify-center space-y-4 text-center">
-        <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl font-headline">Como a RotaConecta funciona?</h2>
+        <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl font-headline">Como a FretesBrasil funciona?</h2>
         <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
           Unimos quem precisa transportar com quem está pronto para rodar, de forma simples e rápida, em todo o Brasil.
         </p>
@@ -236,7 +236,7 @@ const AppSection = () => (
     <section className="w-full py-12 md:py-24 lg:py-32 bg-card">
         <div className="container mx-auto grid items-center gap-6 px-4 md:px-6 lg:grid-cols-2 lg:gap-10">
             <div className="space-y-4">
-                <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight font-headline">O aplicativo RotaConecta</h2>
+                <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight font-headline">O aplicativo FretesBrasil</h2>
                 <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                     Todas as vantagens da nossa plataforma na palma da sua mão. Baixe agora e revolucione sua forma de transportar.
                 </p>
@@ -270,12 +270,12 @@ const AppSection = () => (
 const BlogSection = () => (
     <section className="w-full py-12 md:py-24 lg:py-32">
         <div className="container mx-auto px-4 md:px-6">
-            <h2 className="text-3xl font-bold tracking-tighter text-center sm:text-5xl font-headline mb-8">Blog RotaConecta</h2>
+            <h2 className="text-3xl font-bold tracking-tighter text-center sm:text-5xl font-headline mb-8">Blog FretesBrasil</h2>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {[1,2,3].map((item) => (
                     <Card key={item}>
                         <Link href="#">
-                            <Image src={`https://placehold.co/600x400.png`} alt={`Blog Post ${item}`} width={600} height={400} className="rounded-t-lg object-cover" data-ai-hint="road trip" />
+                            <Image src={`https://placehold.co/600x400.png`} alt={`Blog Post ${item}`} width={600} height={400} className="rounded-t-lg object-cover" data-ai-hint="truck maintenance" />
                         </Link>
                         <CardContent className="p-4">
                             <h3 className="text-lg font-bold">Dicas para manutenção de caminhões</h3>
@@ -294,7 +294,7 @@ const Footer = () => (
         <div className="container mx-auto py-12 px-4 md:px-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                 <div className="flex flex-col gap-2">
-                    <h3 className="font-bold">RotaConecta</h3>
+                    <h3 className="font-bold">FretesBrasil</h3>
                     <Logo />
                 </div>
                 <div className="flex flex-col gap-2">
@@ -322,7 +322,7 @@ const Footer = () => (
                 </div>
             </div>
             <div className="mt-8 border-t pt-8 text-center text-sm text-muted-foreground">
-                © {new Date().getFullYear()} RotaConecta. Todos os direitos reservados.
+                © {new Date().getFullYear()} FretesBrasil. Todos os direitos reservados.
             </div>
         </div>
     </footer>

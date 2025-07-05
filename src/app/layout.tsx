@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
-  title: 'RotaConecta',
+  title: 'FretesBrasil',
   description: 'A melhor plataforma de transporte rodoviário de cargas do Brasil!',
 };
 

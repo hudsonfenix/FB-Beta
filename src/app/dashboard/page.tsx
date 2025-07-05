@@ -13,7 +13,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold font-headline">Bem-vindo, José!</h1>
+        <h1 className="text-3xl font-bold font-headline">Bem-vindo de volta, José!</h1>
         <p className="text-muted-foreground">Aqui está um resumo da sua atividade.</p>
       </div>
 
