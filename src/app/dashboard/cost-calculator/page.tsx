@@ -73,7 +73,7 @@ export default function CostCalculatorPage() {
   }
 
   return (
-    <div className="container mx-auto space-y-8">
+    <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold font-headline">Cálculo de Custo Operacional</h1>
         <p className="text-muted-foreground">Preencha os dados para obter uma estimativa de custo e análise de rentabilidade.</p>
