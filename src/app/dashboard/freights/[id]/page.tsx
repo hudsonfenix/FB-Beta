@@ -29,7 +29,7 @@ export default function FreightDetailPage({ params }: { params: { id: string } }
   const { company, details } = freight;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-6xl mx-auto space-y-6">
       <Link href="/dashboard/freights" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
         <ArrowLeft className="h-4 w-4" />
         Voltar para a lista de fretes

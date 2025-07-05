@@ -88,7 +88,7 @@ export default function DashboardLayout({
           </div>
         </header>
         <div className="flex-1">
-          <main className="p-4 md:p-6 lg:p-8 container mx-auto">
+          <main className="p-4 md:p-6 lg:p-8">
               {children}
           </main>
         </div>
