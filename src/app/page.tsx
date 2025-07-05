@@ -81,8 +81,8 @@ const HeroSection = () => (
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="cpf">CPF</Label>
-                  <Input id="cpf" placeholder="000.000.000-00" />
+                  <Label htmlFor="cnpj">CNPJ</Label>
+                  <Input id="cnpj" placeholder="00.000.000/0000-00" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="birthdate">Data de nascimento</Label>
