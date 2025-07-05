@@ -10,25 +10,15 @@ import { Send, HandCoins } from 'lucide-react'
 import type { Freight } from '@/lib/freight-data'
 import { cn } from '@/lib/utils'
 
-const VIP_LOCK_DURATION = 60 * 60 * 1000 // 1 hour in milliseconds
+const VIP_LOCK_DURATION = 30 * 60 * 1000 // 30 minutes
 
 function formatTime(ms: number | null) {
     if (ms === null) return 'Calculando...';
     const totalSeconds = Math.max(0, Math.floor(ms / 1000));
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
 
-    if (hours > 0) {
-        return `${hours}h ${String(minutes).padStart(2, '0')}min ${String(seconds).padStart(2, '0')}s`;
-    }
-    if (minutes > 0) {
-        return `${minutes}min ${String(seconds).padStart(2, '0')}s`;
-    }
-    if (totalSeconds > 0) {
-        return `${seconds}s`;
-    }
-    return 'Liberando...';
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
 
 export function FreightCard({ freight }: { freight: Freight }) {
@@ -43,7 +33,7 @@ export function FreightCard({ freight }: { freight: Freight }) {
 
     const calculateRemaining = () => VIP_LOCK_DURATION - (Date.now() - freight.postedAt.getTime());
 
-    // Set initial time
+    // Set initial time on client to avoid hydration mismatch
     setTimeLeft(calculateRemaining());
 
     const intervalId = setInterval(() => {
@@ -133,6 +123,9 @@ export function FreightCard({ freight }: { freight: Freight }) {
                     <p className="text-lg font-bold text-foreground">{mainPrice}</p>
                     <p className="text-xs text-muted-foreground">{priceDetails}</p>
                   </>
+                )}
+                {freight.isVip && (
+                    <p className="text-xs font-bold text-primary mt-1">APENAS VIP!</p>
                 )}
               </div>
               <div className="flex items-center gap-2 mt-2">
