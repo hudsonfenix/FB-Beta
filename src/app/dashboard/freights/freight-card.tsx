@@ -51,13 +51,6 @@ export function FreightCard({ freight }: { freight: Freight }) {
 
   const isLocked = freight.isVip && (timeLeft === null || timeLeft > 0);
 
-  let mainPrice = freight.price;
-  let priceDetails = 'Valor total do frete';
-  if (freight.price.includes('P/ TON')) {
-      mainPrice = freight.price.split(' P/ TON')[0];
-      priceDetails = "Por tonelada + pedágio incluso";
-  }
-
   const handleCardClick = () => {
     if (!isLocked) {
       router.push(`/dashboard/freights/${freight.id}`);
@@ -75,7 +68,6 @@ export function FreightCard({ freight }: { freight: Freight }) {
         onClick={handleCardClick}
     >
       <div className="p-4 relative">
-        {freight.isVip && <p className="text-xs font-semibold uppercase text-primary mb-2">Patrocinado</p>}
         <div className="grid grid-cols-12 gap-4">
           <div className="col-span-2 flex flex-col items-center justify-start text-center pt-1">
             <Image 
@@ -119,10 +111,7 @@ export function FreightCard({ freight }: { freight: Freight }) {
                 {freight.isVip ? (
                     <p className="text-lg font-bold text-foreground">R$ ***,**</p>
                 ) : (
-                  <>
-                    <p className="text-lg font-bold text-foreground">{mainPrice}</p>
-                    <p className="text-xs text-muted-foreground">{priceDetails}</p>
-                  </>
+                  <p className="text-lg font-bold text-foreground">{freight.price}</p>
                 )}
                 {freight.isVip && (
                     <p className="text-xs font-bold text-primary mt-1">APENAS VIP!</p>
