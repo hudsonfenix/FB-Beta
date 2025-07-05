@@ -26,10 +26,8 @@ export function FreightCard({ freight }: { freight: Freight }) {
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!freight.isVip) {
-        setTimeLeft(0);
-        return;
-    }
+    // We only run the countdown for VIP freights.
+    if (!freight.isVip) return;
 
     const calculateRemaining = () => VIP_LOCK_DURATION - (Date.now() - freight.postedAt.getTime());
 
@@ -37,23 +35,18 @@ export function FreightCard({ freight }: { freight: Freight }) {
 
     const intervalId = setInterval(() => {
         const remaining = calculateRemaining();
+        setTimeLeft(remaining);
+        // Stop the interval when the timer runs out.
         if (remaining <= 0) {
             clearInterval(intervalId);
-            setTimeLeft(0);
-        } else {
-            setTimeLeft(remaining);
         }
     }, 1000);
 
     return () => clearInterval(intervalId);
   }, [freight.isVip, freight.postedAt]);
 
-  const isLocked = freight.isVip && (timeLeft === null || timeLeft > 0);
-
   const handleCardClick = () => {
-    if (!isLocked) {
-      router.push(`/dashboard/freights/${freight.id}`);
-    }
+    router.push(`/dashboard/freights/${freight.id}`);
   }
   
   const handleActionClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -62,7 +55,7 @@ export function FreightCard({ freight }: { freight: Freight }) {
 
   return (
     <Card 
-        className={cn("hover:shadow-lg transition-shadow cursor-pointer", isLocked && "bg-muted/50 opacity-80 cursor-not-allowed")}
+        className={cn("hover:shadow-lg transition-shadow cursor-pointer")}
         onClick={handleCardClick}
     >
       <div className="p-4 relative">
@@ -76,7 +69,7 @@ export function FreightCard({ freight }: { freight: Freight }) {
               className="rounded-md object-contain mb-2"
               data-ai-hint="company logo"
             />
-            {isLocked ? (
+            {freight.isVip ? (
                 <span className="text-sm font-bold text-primary">{formatTime(timeLeft)}</span>
             ) : (
               <span className="text-xs text-muted-foreground">{freight.details.addedAt}</span>
@@ -106,7 +99,7 @@ export function FreightCard({ freight }: { freight: Freight }) {
 
           <div className="col-span-4 flex flex-col justify-between items-end text-right">
               <div className="text-right">
-                {isLocked ? (
+                {freight.isVip ? (
                     <p className="text-lg font-bold text-foreground">R$ ***,**</p>
                 ) : (
                   <p className="text-lg font-bold text-foreground">{freight.price}</p>
@@ -116,10 +109,10 @@ export function FreightCard({ freight }: { freight: Freight }) {
                 )}
               </div>
               <div className="flex items-center gap-2 mt-2">
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary" disabled={isLocked} onClick={handleActionClick}>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary" onClick={handleActionClick}>
                       <HandCoins className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary" disabled={isLocked} onClick={handleActionClick}>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary" onClick={handleActionClick}>
                       <Send className="h-4 w-4" />
                   </Button>
               </div>
