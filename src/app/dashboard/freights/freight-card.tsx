@@ -12,7 +12,8 @@ import { cn } from '@/lib/utils'
 
 const VIP_LOCK_DURATION = 60 * 60 * 1000 // 1 hour in milliseconds
 
-function formatTime(ms: number) {
+function formatTime(ms: number | null) {
+    if (ms === null) return 'Calculando...';
     const totalSeconds = Math.max(0, Math.floor(ms / 1000));
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -24,29 +25,33 @@ function formatTime(ms: number) {
 
 export function FreightCard({ freight }: { freight: Freight }) {
   const router = useRouter();
-  const [timeLeft, setTimeLeft] = useState<number>(() => {
-    if (!freight.isVip) return 0
-    const elapsed = Date.now() - freight.postedAt.getTime()
-    return VIP_LOCK_DURATION - elapsed
-  })
+  const [timeLeft, setTimeLeft] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!freight.isVip || timeLeft <= 0) return
+    if (!freight.isVip) {
+        setTimeLeft(0);
+        return;
+    }
 
-    const interval = setInterval(() => {
-      setTimeLeft((prevTime) => {
-        if (prevTime <= 1000) {
-          clearInterval(interval)
-          return 0
+    const calculateRemaining = () => VIP_LOCK_DURATION - (Date.now() - freight.postedAt.getTime());
+
+    // Set initial time
+    setTimeLeft(calculateRemaining());
+
+    const intervalId = setInterval(() => {
+        const remaining = calculateRemaining();
+        if (remaining <= 0) {
+            clearInterval(intervalId);
+            setTimeLeft(0);
+        } else {
+            setTimeLeft(remaining);
         }
-        return prevTime - 1000
-      })
-    }, 1000)
+    }, 1000);
 
-    return () => clearInterval(interval)
-  }, [freight.isVip, timeLeft])
+    return () => clearInterval(intervalId);
+  }, [freight.isVip, freight.postedAt]);
 
-  const isLocked = freight.isVip && timeLeft > 0
+  const isLocked = freight.isVip && (timeLeft === null || timeLeft > 0);
 
   let mainPrice = freight.price;
   let priceDetails = 'Valor total do frete';
@@ -115,8 +120,14 @@ export function FreightCard({ freight }: { freight: Freight }) {
 
           <div className="col-span-4 flex flex-col justify-between items-end text-right">
               <div className="text-right">
-                <p className="text-lg font-bold text-foreground">{isLocked ? 'R$ ***,**' : mainPrice}</p>
-                <p className="text-xs text-muted-foreground">{isLocked ? 'Exclusivo para VIPs' : priceDetails}</p>
+                {isLocked ? (
+                    <p className="text-lg font-bold text-foreground">R$ ***,**</p>
+                ) : (
+                  <>
+                    <p className="text-lg font-bold text-foreground">{mainPrice}</p>
+                    <p className="text-xs text-muted-foreground">{priceDetails}</p>
+                  </>
+                )}
               </div>
               <div className="flex items-center gap-2 mt-2">
                   <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary" disabled={isLocked} onClick={handleActionClick}>
