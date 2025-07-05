@@ -33,7 +33,6 @@ export function FreightCard({ freight }: { freight: Freight }) {
 
     const calculateRemaining = () => VIP_LOCK_DURATION - (Date.now() - freight.postedAt.getTime());
 
-    // Set initial time on client to avoid hydration mismatch
     setTimeLeft(calculateRemaining());
 
     const intervalId = setInterval(() => {
@@ -59,7 +58,6 @@ export function FreightCard({ freight }: { freight: Freight }) {
   
   const handleActionClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
-      // Futuramente, podemos adicionar uma ação aqui, como exibir um toast.
   }
 
   return (
@@ -78,8 +76,8 @@ export function FreightCard({ freight }: { freight: Freight }) {
               className="rounded-md object-contain mb-2"
               data-ai-hint="company logo"
             />
-            {freight.isVip ? (
-                <span className="text-xs text-primary font-bold">{formatTime(timeLeft)}</span>
+            {isLocked ? (
+                <span className="text-sm font-bold text-primary">{formatTime(timeLeft)}</span>
             ) : (
               <span className="text-xs text-muted-foreground">{freight.details.addedAt}</span>
             )}
@@ -108,7 +106,7 @@ export function FreightCard({ freight }: { freight: Freight }) {
 
           <div className="col-span-4 flex flex-col justify-between items-end text-right">
               <div className="text-right">
-                {freight.isVip ? (
+                {isLocked ? (
                     <p className="text-lg font-bold text-foreground">R$ ***,**</p>
                 ) : (
                   <p className="text-lg font-bold text-foreground">{freight.price}</p>
