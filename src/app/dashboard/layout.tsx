@@ -47,7 +47,7 @@ export default function DashboardLayout({
     <SidebarProvider>
       <div className="flex flex-col min-h-svh">
         <header className="sticky top-0 z-40 w-full border-b bg-card">
-          <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
+          <div className="flex h-16 items-center justify-between px-4 md:px-6">
             <div className="flex items-center gap-4">
               <div className="md:hidden">
                  <SidebarTrigger />
