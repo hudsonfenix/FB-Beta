@@ -86,7 +86,7 @@ export function FreightCard({ freight }: { freight: Freight }) {
               className="rounded-md object-contain mb-2"
               data-ai-hint="company logo"
             />
-            {isLocked ? (
+            {freight.isVip ? (
                 <span className="text-xs text-primary font-bold">{formatTime(timeLeft)}</span>
             ) : (
               <span className="text-xs text-muted-foreground">{freight.details.addedAt}</span>
@@ -116,7 +116,7 @@ export function FreightCard({ freight }: { freight: Freight }) {
 
           <div className="col-span-4 flex flex-col justify-between items-end text-right">
               <div className="text-right">
-                {isLocked ? (
+                {freight.isVip ? (
                     <p className="text-lg font-bold text-foreground">R$ ***,**</p>
                 ) : (
                   <>
