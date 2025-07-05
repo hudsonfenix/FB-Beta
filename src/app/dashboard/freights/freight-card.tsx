@@ -17,9 +17,17 @@ function formatTime(ms: number | null) {
     const totalSeconds = Math.max(0, Math.floor(ms / 1000));
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
 
-    if (hours > 0) return `${hours}h ${minutes}min`;
-    if (minutes > 0) return `${minutes} min`;
+    if (hours > 0) {
+        return `${hours}h ${String(minutes).padStart(2, '0')}min ${String(seconds).padStart(2, '0')}s`;
+    }
+    if (minutes > 0) {
+        return `${minutes}min ${String(seconds).padStart(2, '0')}s`;
+    }
+    if (totalSeconds > 0) {
+        return `${seconds}s`;
+    }
     return 'Liberando...';
 }
 
@@ -104,16 +112,14 @@ export function FreightCard({ freight }: { freight: Freight }) {
               </div>
               <div className="flex flex-col justify-between w-full">
                 <div>
-                  <p className="font-semibold">{isLocked ? '***' : freight.origin}</p>
-                  <p className="font-semibold">{isLocked ? '***' : freight.destination}</p>
+                  <p className="font-semibold">{freight.origin}</p>
+                  <p className="font-semibold">{freight.destination}</p>
                 </div>
-                 {!isLocked && (
-                   <div className="flex items-center gap-2 flex-wrap mt-2">
-                      <Badge variant="outline">{freight.details.product}</Badge>
-                      <Badge variant="outline">{freight.details.km} km</Badge>
-                      <Badge variant="outline">{freight.vehicle.split(',')[0]}</Badge>
-                   </div>
-                 )}
+                 <div className="flex items-center gap-2 flex-wrap mt-2">
+                    <Badge variant="outline">{freight.details.product}</Badge>
+                    <Badge variant="outline">{freight.details.km} km</Badge>
+                    <Badge variant="outline">{freight.vehicle.split(',')[0]}</Badge>
+                 </div>
               </div>
             </div>
           </div>
