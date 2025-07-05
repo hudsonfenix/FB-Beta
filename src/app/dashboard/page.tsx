@@ -4,7 +4,7 @@ import { ArrowRight, Truck, Calculator, BarChartHorizontal } from 'lucide-react'
 import Link from 'next/link'
 
 const stats = [
-  { name: 'Fretes Disponíveis', value: '1,204', icon: Truck },
+  { name: 'Fretes Disponíveis', value: '72.479', icon: Truck },
   { name: 'Sua Avaliação', value: '4.8/5', icon: BarChartHorizontal },
   { name: 'Cálculos Restantes', value: '29', icon: Calculator },
 ]

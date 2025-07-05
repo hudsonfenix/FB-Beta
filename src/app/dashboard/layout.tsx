@@ -9,7 +9,9 @@ import {
   Settings,
   LogOut,
   ChevronRight,
-  Star
+  Star,
+  User,
+  ChevronDown
 } from 'lucide-react'
 import {
   Sidebar,
@@ -27,6 +29,7 @@ import { Logo } from '@/components/logo'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { usePathname } from 'next/navigation'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 
 export default function DashboardLayout({
   children,
@@ -36,108 +39,59 @@ export default function DashboardLayout({
   const pathname = usePathname()
   
   const isActive = (path: string) => {
-    return pathname === path
+    return pathname.startsWith(path)
   }
 
   return (
     <SidebarProvider>
-      <Sidebar>
-        <SidebarHeader>
-          <div className="flex items-center justify-between">
-            <Logo />
-            <SidebarTrigger />
-          </div>
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton href="/dashboard" asChild isActive={isActive('/dashboard')}>
-                <Link href="/dashboard">
-                  <LayoutDashboard />
-                  Dashboard
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton href="/dashboard/freights" asChild isActive={isActive('/dashboard/freights')}>
-                <Link href="/dashboard/freights">
-                  <Truck />
+      <div className="flex flex-col min-h-svh">
+        <header className="sticky top-0 z-40 w-full border-b bg-card">
+          <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
+            <div className="flex items-center gap-4">
+              <div className="md:hidden">
+                 <SidebarTrigger />
+              </div>
+              <Logo />
+              <nav className="hidden items-center gap-6 md:flex text-sm font-medium">
+                <Link href="/dashboard/freights" className={cn("transition-colors hover:text-primary", isActive('/dashboard/freights') ? 'text-primary' : 'text-muted-foreground')}>
                   Fretes
                 </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton href="/dashboard/cost-calculator" asChild isActive={isActive('/dashboard/cost-calculator')}>
-                <Link href="/dashboard/cost-calculator">
-                  <Calculator />
-                  Calcular Custo
+                <Link href="/dashboard/cost-calculator" className={cn("transition-colors hover:text-primary", isActive('/dashboard/cost-calculator') ? 'text-primary' : 'text-muted-foreground')}>
+                  Atendimento
                 </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-
-          <div className="m-4 mt-auto">
-             <Card />
-          </div>
-
-        </SidebarContent>
-        <SidebarFooter>
-           <SidebarMenu>
-            <SidebarMenuItem>
-                <SidebarMenuButton>
-                    <Settings />
-                    Configurações
-                </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                    <Link href="/">
-                        <LogOut />
-                        Sair
-                    </Link>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
-           </SidebarMenu>
-            <div className="flex items-center gap-2 border-t p-4">
-                 <Avatar>
-                    <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                    <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col">
-                    <span className="font-semibold text-sm">José da Silva</span>
-                    <span className="text-xs text-muted-foreground">Motorista</span>
-                </div>
+              </nav>
             </div>
-        </SidebarFooter>
-      </Sidebar>
-      <SidebarInset>
-        <main className="min-h-svh p-4 md:p-6 lg:p-8">
-            {children}
-        </main>
-      </SidebarInset>
-    </SidebarProvider>
-  )
-}
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="flex items-center gap-2">
+                   <User className="h-5 w-5 text-muted-foreground" />
+                   <span className="hidden md:inline">Olá, José da Silva</span>
+                   <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
+                 <DropdownMenuItem>Dashboard</DropdownMenuItem>
+                <DropdownMenuItem>Configurações</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sair
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-function Card() {
-  return (
-    <div className="overflow-hidden rounded-lg bg-primary/10 group-data-[collapsible=icon]:hidden">
-      <div className="p-4">
-        <div className="flex items-center gap-2">
-           <Star className="text-yellow-500 fill-yellow-400" />
-           <h3 className="font-semibold text-sm">Seja VIP</h3>
+          </div>
+        </header>
+        <div className="flex-1">
+          <main className="p-4 md:p-6 lg:p-8 container mx-auto">
+              {children}
+          </main>
         </div>
-        <p className="mt-2 text-xs text-primary/80">
-          Acesso prioritário aos fretes e mais cálculos de custo!
-        </p>
       </div>
-      <Link
-        href="#"
-        className="flex items-center justify-between bg-primary/20 px-4 py-2 text-xs font-medium text-primary hover:bg-primary/30"
-      >
-        <span>Fazer upgrade</span>
-        <ChevronRight className="h-4 w-4" />
-      </Link>
-    </div>
+    </SidebarProvider>
   )
 }

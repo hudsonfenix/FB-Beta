@@ -1,0 +1,134 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import Image from 'next/image'
+import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Send, HandCoins } from 'lucide-react'
+import type { Freight } from '@/lib/freight-data'
+import { cn } from '@/lib/utils'
+
+const VIP_LOCK_DURATION = 60 * 60 * 1000 // 1 hour in milliseconds
+
+function formatTime(ms: number) {
+    const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+    if (hours > 0) return `${hours}h ${minutes}min`;
+    if (minutes > 0) return `${minutes} min`;
+    return 'Liberando...';
+}
+
+export function FreightCard({ freight }: { freight: Freight }) {
+  const router = useRouter();
+  const [timeLeft, setTimeLeft] = useState<number>(() => {
+    if (!freight.isVip) return 0
+    const elapsed = Date.now() - freight.postedAt.getTime()
+    return VIP_LOCK_DURATION - elapsed
+  })
+
+  useEffect(() => {
+    if (!freight.isVip || timeLeft <= 0) return
+
+    const interval = setInterval(() => {
+      setTimeLeft((prevTime) => {
+        if (prevTime <= 1000) {
+          clearInterval(interval)
+          return 0
+        }
+        return prevTime - 1000
+      })
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [freight.isVip, timeLeft])
+
+  const isLocked = freight.isVip && timeLeft > 0
+
+  let mainPrice = freight.price;
+  let priceDetails = 'Valor total do frete';
+  if (freight.price.includes('P/ TON')) {
+      mainPrice = freight.price.split(' P/ TON')[0];
+      priceDetails = "Por tonelada + pedágio incluso";
+  }
+
+  const handleCardClick = () => {
+    if (!isLocked) {
+      router.push(`/dashboard/freights/${freight.id}`);
+    }
+  }
+  
+  const handleActionClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.stopPropagation();
+      // Futuramente, podemos adicionar uma ação aqui, como exibir um toast.
+  }
+
+  return (
+    <Card 
+        className={cn("hover:shadow-lg transition-shadow cursor-pointer", isLocked && "bg-muted/50 opacity-80 cursor-not-allowed")}
+        onClick={handleCardClick}
+    >
+      <div className="p-4 relative">
+        {freight.isVip && <p className="text-xs font-semibold uppercase text-primary mb-2">Patrocinado</p>}
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-2 flex flex-col items-center justify-start text-center pt-1">
+            <Image 
+              src={freight.company.logoUrl} 
+              alt={`Logo ${freight.company.name}`} 
+              width={80} 
+              height={40}
+              className="rounded-md object-contain mb-2"
+              data-ai-hint="company logo"
+            />
+            {isLocked ? (
+                <span className="text-xs text-primary font-bold">{formatTime(timeLeft)}</span>
+            ) : (
+              <span className="text-xs text-muted-foreground">{freight.details.addedAt}</span>
+            )}
+          </div>
+          
+          <div className="col-span-6">
+            <div className="flex gap-4 h-full">
+              <div className="flex flex-col items-center">
+                <div className="h-3 w-3 mt-1 rounded-full border-2 border-primary"></div>
+                <div className="flex-1 w-px bg-border my-1"></div>
+                <div className="w-3 h-3 border-2 border-primary bg-primary" style={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)' }}></div>
+              </div>
+              <div className="flex flex-col justify-between w-full">
+                <div>
+                  <p className="font-semibold">{isLocked ? '***' : freight.origin}</p>
+                  <p className="font-semibold">{isLocked ? '***' : freight.destination}</p>
+                </div>
+                 {!isLocked && (
+                   <div className="flex items-center gap-2 flex-wrap mt-2">
+                      <Badge variant="outline">{freight.details.product}</Badge>
+                      <Badge variant="outline">{freight.details.km} km</Badge>
+                      <Badge variant="outline">{freight.vehicle.split(',')[0]}</Badge>
+                   </div>
+                 )}
+              </div>
+            </div>
+          </div>
+
+          <div className="col-span-4 flex flex-col justify-between items-end text-right">
+              <div className="text-right">
+                <p className="text-lg font-bold text-foreground">{isLocked ? 'R$ ***,**' : mainPrice}</p>
+                <p className="text-xs text-muted-foreground">{isLocked ? 'Exclusivo para VIPs' : priceDetails}</p>
+              </div>
+              <div className="flex items-center gap-2 mt-2">
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary" disabled={isLocked} onClick={handleActionClick}>
+                      <HandCoins className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary" disabled={isLocked} onClick={handleActionClick}>
+                      <Send className="h-4 w-4" />
+                  </Button>
+              </div>
+          </div>
+        </div>
+      </div>
+    </Card>
+  )
+}
