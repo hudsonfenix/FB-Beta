@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -9,7 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Logo } from '@/components/logo'
-import { Upload, CheckCircle } from 'lucide-react'
+import { Upload } from 'lucide-react'
 import { Progress } from '@/components/ui/progress'
 
 const vehicleTypes = {
@@ -26,48 +27,38 @@ const bodyTypes = {
 
 const trackerOptions = ["Não tem rastreador", "Tem, mas não sei a marca", "Autotrac", "Onix Sat", "Positron", "Sascar", "Porto Seguro"];
 
+
 export default function DriverRegisterPage() {
   const [step, setStep] = useState(1);
+  const router = useRouter();
 
   const nextStep = () => setStep(prev => prev + 1);
   const prevStep = () => setStep(prev => prev - 1);
 
-  const progressValue = (step / 4) * 100;
+  const onFinalSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    router.push('/dashboard');
+  }
 
-  const renderStep = () => {
-    switch (step) {
-      case 1:
-        return <Step1 nextStep={nextStep} />;
-      case 2:
-        return <Step2 nextStep={nextStep} prevStep={prevStep} />;
-      case 3:
-        return <Step3 nextStep={nextStep} prevStep={prevStep} />;
-      case 4:
-        return <Step4 />;
-      default:
-        return <Step1 nextStep={nextStep} />;
-    }
-  };
-
+  const progressValue = (step / 3) * 100;
+  
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
         <Card className="w-full max-w-2xl">
             <CardHeader>
-                {step < 4 && (
-                    <>
-                        <div className="flex justify-center mb-4">
-                            <Logo />
-                        </div>
-                        <Progress value={progressValue} className="w-full" />
-                        <CardTitle className="text-2xl text-center pt-4">Cadastro de Motorista</CardTitle>
-                        <CardDescription className="text-center">
-                            Siga os passos para completar seu cadastro.
-                        </CardDescription>
-                    </>
-                )}
+                <div className="flex justify-center mb-4">
+                    <Logo />
+                </div>
+                <Progress value={progressValue} className="w-full" />
+                <CardTitle className="text-2xl text-center pt-4">Cadastro de Motorista</CardTitle>
+                <CardDescription className="text-center">
+                    Siga os passos para completar seu cadastro.
+                </CardDescription>
             </CardHeader>
             <CardContent>
-                {renderStep()}
+                {step === 1 && <Step1 nextStep={nextStep} />}
+                {step === 2 && <Step2 nextStep={nextStep} prevStep={prevStep} />}
+                {step === 3 && <Step3 onFinalSubmit={onFinalSubmit} prevStep={prevStep} />}
             </CardContent>
         </Card>
     </div>
@@ -197,8 +188,8 @@ const Step2 = ({ nextStep, prevStep }: { nextStep: () => void; prevStep: () => v
     </form>
 );
 
-const Step3 = ({ nextStep, prevStep }: { nextStep: () => void; prevStep: () => void }) => (
-    <form onSubmit={(e) => { e.preventDefault(); nextStep()}} className="grid gap-6">
+const Step3 = ({ onFinalSubmit, prevStep }: { onFinalSubmit: (e: React.FormEvent) => void; prevStep: () => void }) => (
+    <form onSubmit={onFinalSubmit} className="grid gap-6">
         <h3 className="font-semibold">Envio de Documentos</h3>
         <p className="text-sm text-muted-foreground">Para sua segurança, precisamos validar seus documentos. Envie uma foto da sua CNH e CRLV.</p>
         <div className="grid gap-4">
@@ -233,20 +224,3 @@ const FileUpload = ({ title, description }: { title: string, description: string
         </div>
     );
 };
-
-
-const Step4 = () => (
-    <div className="text-center p-4">
-        <div className="mx-auto bg-green-100 rounded-full p-4 w-fit">
-            <CheckCircle className="h-16 w-16 text-green-600" />
-        </div>
-        <CardTitle className="mt-6 text-2xl">Aguarde a análise dos dados</CardTitle>
-        <CardDescription className="mt-2">
-            Você receberá uma mensagem no WhatsApp ou e-mail com a aprovação do seu cadastro.
-            Isso pode levar algumas horas.
-        </CardDescription>
-        <Button asChild className="mt-6 w-full max-w-sm">
-            <Link href="/">Voltar para a página inicial</Link>
-        </Button>
-    </div>
-);

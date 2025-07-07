@@ -27,13 +27,13 @@ export default function LoginPage() {
                 <TabsTrigger value="agenciador">Agenciador</TabsTrigger>
               </TabsList>
               <TabsContent value="motorista">
-                <LoginForm />
+                <LoginForm loginType="CPF" />
               </TabsContent>
               <TabsContent value="transportador">
-                <LoginForm />
+                <LoginForm loginType="CNPJ" />
               </TabsContent>
               <TabsContent value="agenciador">
-                <LoginForm />
+                <LoginForm loginType="CNPJ" />
               </TabsContent>
             </Tabs>
             <div className="mt-4 text-center text-sm">
@@ -49,12 +49,17 @@ export default function LoginPage() {
   )
 }
 
-function LoginForm() {
+function LoginForm({ loginType }: { loginType: 'CPF' | 'CNPJ' }) {
+  const isCpf = loginType === 'CPF';
+  const label = isCpf ? "CPF" : "CNPJ";
+  const placeholder = isCpf ? "000.000.000-00" : "00.000.000/0000-00";
+  const inputId = isCpf ? "cpf" : "cnpj";
+
   return (
     <form className="space-y-4 pt-4">
       <div className="space-y-2">
-        <Label htmlFor="cpf">CPF</Label>
-        <Input id="cpf" placeholder="000.000.000-00" required />
+        <Label htmlFor={inputId}>{label}</Label>
+        <Input id={inputId} placeholder={placeholder} required />
       </div>
       <div className="space-y-2">
         <div className="flex items-center">
