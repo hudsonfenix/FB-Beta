@@ -1,6 +1,6 @@
 'use client'
 
-import { notFound } from 'next/navigation'
+import { useParams, notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { freights } from '@/lib/freight-data'
@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Separator } from '@/components/ui/separator'
-import { ArrowLeft, Phone, MessageSquare, Star as StarIcon, Calculator } from 'lucide-react'
+import { ArrowLeft, Phone, MessageSquare, Star as StarIcon } from 'lucide-react'
 import { cn } from "@/lib/utils"
 import { CostCalculatorSection } from '@/app/dashboard/freights/cost-calculator-section'
 
@@ -20,7 +20,8 @@ const DetailItem = ({ label, value, className }: { label: string; value: React.R
   </div>
 );
 
-export default function FreightDetailPage({ params }: { params: { id: string } }) {
+export default function FreightDetailPage() {
+  const params = useParams<{ id: string }>()
   const freight = freights.find(f => f.id.toString() === params.id)
 
   if (!freight) {

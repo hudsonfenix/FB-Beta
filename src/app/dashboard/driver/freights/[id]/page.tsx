@@ -1,6 +1,6 @@
 'use client'
 
-import { notFound } from 'next/navigation'
+import { useParams, notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { freights } from '@/lib/freight-data'
@@ -20,7 +20,8 @@ const DetailItem = ({ label, value, className }: { label: string; value: React.R
   </div>
 );
 
-export default function FreightDetailPage({ params }: { params: { id: string } }) {
+export default function FreightDetailPage() {
+  const params = useParams<{ id: string }>()
   const freight = freights.find(f => f.id.toString() === params.id)
 
   if (!freight) {
