@@ -122,20 +122,11 @@ export function RouteCalculatorModal({ isOpen, onOpenChange, onCalculate, isLoad
                   </Popover>
                   <div className="flex items-center gap-2"><Clock />{format(currentDate, "HH:mm")}</div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="sm" type="button"><Clock className="h-4 w-4" />Minhas Rotas</Button>
-                  <Button variant="ghost" size="sm" type="button"><Compass className="h-4 w-4" />CEP</Button>
-                  <Button variant="ghost" size="sm" type="button"><Upload className="h-4 w-4" />Importar Coordenadas</Button>
-                  <Button variant="ghost" size="sm" type="button"><FileText className="h-4 w-4" />Importar CTE</Button>
-                  <Button variant="ghost" size="icon" type="button" className="h-8 w-8"><Link2 className="h-4 w-4" /></Button>
-                  <Button variant="ghost" size="icon" type="button" className="h-8 w-8"><Download className="h-4 w-4" /></Button>
-                </div>
               </div>
 
               <div className="space-y-4">
                 <LocationInput icon={<Home />} label="Origem" cityFieldName="originCity" addressFieldName="originAddress" />
                 <LocationInput icon={<MapPin />} label="Destino" cityFieldName="destinationCity" addressFieldName="destinationAddress" />
-                <Button variant="link" type="button" className="p-0 h-auto text-primary"><Plus className="h-4 w-4 mr-1" />Adicionar destino</Button>
               </div>
 
               <Separator />
@@ -226,8 +217,6 @@ export function RouteCalculatorModal({ isOpen, onOpenChange, onCalculate, isLoad
                         <ToggleGroupItem value="CAR" className="flex-1"><Car /></ToggleGroupItem>
                         <ToggleGroupItem value="VLC" className="flex-1"><Truck className="h-5 w-5"/></ToggleGroupItem>
                         <ToggleGroupItem value="CARRETA" className="flex-1"><Tractor/></ToggleGroupItem>
-                        <ToggleGroupItem value="TRUCK" className="flex-1"><Truck/></ToggleGroupItem>
-                        <ToggleGroupItem value="BITRUCK" className="flex-1"><BusFront/></ToggleGroupItem>
                       </ToggleGroup>
                     </FormItem>
                   )}
