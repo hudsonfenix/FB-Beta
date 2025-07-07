@@ -34,7 +34,7 @@ export async function getRouteInfo(params: RouteInfoParams): Promise<{ distance:
         };
     }
 
-    const apiUrl = 'https://lway.webrouter.com.br/RouterService/router/api/calcular';
+    const apiUrl = 'https://way.webrouter.com.br/RouterService/router/api/calcular';
     
     const requestBody = {
         token: apiKey,
