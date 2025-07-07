@@ -37,6 +37,11 @@ const getVehicleEnum = (vehicleString: string) => {
     return 'CARRETA'; // Default fallback
 };
 
+const vehicleToAxleMap: Record<string, number> = {
+    CAR: 2, TRUCK: 3, BITREM: 7, CARRETA: 5, CARRETA_LS: 6, RODOTREM: 9, 
+    VANDERLEIA: 6, BITRUCK: 4, TOCO: 2, THREE_QUARTERS: 2, FIORINO: 2, VLC: 2
+};
+
 
 export function CostCalculatorSection({ freight }: { freight: Freight }) {
   const [result, setResult] = useState<CalculateOperationalCostOutput | null>(null);
@@ -53,7 +58,6 @@ export function CostCalculatorSection({ freight }: { freight: Freight }) {
       // Overwrite with freight data to ensure accuracy
       origin: freight.origin,
       destination: freight.destination,
-      vehicleType: getVehicleEnum(freight.vehicle),
       cargoValue: 100000, 
       cargoWeight: parseFloat(freight.details.weight) * 1000 || 25000,
       cargoType: freight.details.product,
@@ -75,10 +79,14 @@ export function CostCalculatorSection({ freight }: { freight: Freight }) {
     }
   }
 
+  const vehicleEnum = getVehicleEnum(freight.vehicle);
+  const axleCount = vehicleToAxleMap[vehicleEnum] || 5;
+
   const initialModalData = {
     originCity: freight.origin,
     destinationCity: freight.destination,
-    vehicleType: getVehicleEnum(freight.vehicle),
+    vehicleType: vehicleEnum,
+    axleCount: axleCount
   };
 
   return (

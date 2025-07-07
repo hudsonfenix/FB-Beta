@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -21,6 +22,7 @@ const CalculateOperationalCostInputSchema = z.object({
   origin: z.string().describe('The origin location of the freight.'),
   destination: z.string().describe('The destination location of the freight.'),
   vehicleType: vehicleTypeEnum.describe('The type of vehicle used for the freight.'),
+  axleCount: z.number().describe('The number of axles on the vehicle.'),
   fuelCostPerLiter: z.number().describe('The cost of fuel per liter.'),
   fuelConsumption: z.number().describe('The fuel consumption rate (e.g., kilometers per liter).'),
   cargoValue: z.number().describe('The declared value of the cargo.'),
@@ -53,13 +55,14 @@ const getRouteInfoTool = ai.defineTool(
       origin: z.string(),
       destination: z.string(),
       vehicleType: vehicleTypeEnum,
+      axleCount: z.number(),
     }),
     outputSchema: z.object({
       distance: z.number(),
       toll: z.number(),
     }),
   },
-  async (input) => getRouteInfo(input)
+  async (input) => getRouteInfo({ ...input, axles: input.axleCount })
 );
 
 
@@ -72,7 +75,7 @@ const calculateOperationalCostPrompt = ai.definePrompt({
 
   Your task is to provide a detailed operational cost analysis for a freight trip.
 
-  1.  First, you **MUST** use the 'getRouteInfo' tool to obtain the exact distance (in km) and total toll cost for the trip between the given origin and destination for the specified vehicle type.
+  1.  First, you **MUST** use the 'getRouteInfo' tool to obtain the exact distance (in km) and total toll cost for the trip between the given origin and destination for the specified vehicle type and axle count.
   2.  Once you have the distance and toll cost from the tool, calculate the total fuel cost. The formula is: \`(distance / fuelConsumption) * fuelCostPerLiter\`.
   3.  The total estimated operational cost is the sum of the total fuel cost and the total toll cost.
   4.  Provide a profitability analysis based on the calculated operational cost against the cargo value.
@@ -82,6 +85,7 @@ const calculateOperationalCostPrompt = ai.definePrompt({
   Origin: {{{origin}}}
   Destination: {{{destination}}}
   Vehicle Type: {{{vehicleType}}}
+  Axle Count: {{{axleCount}}}
   Fuel Cost per Liter: {{{fuelCostPerLiter}}}
   Fuel Consumption (km/l): {{{fuelConsumption}}}
   Cargo Value: {{{cargoValue}}}

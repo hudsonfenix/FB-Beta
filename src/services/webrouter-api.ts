@@ -12,24 +12,8 @@ type RouteInfoParams = {
     origin: string;
     destination: string;
     vehicleType: z.infer<typeof vehicleTypeEnum>;
+    axles: number;
 }
-
-// A simple map to get axle count from vehicle type for the API
-const vehicleToAxleMap: Record<z.infer<typeof vehicleTypeEnum>, number> = {
-    CAR: 2,
-    TRUCK: 3,
-    BITREM: 7,
-    CARRETA: 5,
-    CARRETA_LS: 6,
-    RODOTREM: 9,
-    VANDERLEIA: 6,
-    BITRUCK: 4,
-    TOCO: 2,
-    THREE_QUARTERS: 2,
-    FIORINO: 2,
-    VLC: 2,
-};
-
 
 export async function getRouteInfo(params: RouteInfoParams): Promise<{ distance: number; toll: number }> {
     const apiKey = process.env.ROUTER_API_KEY;
@@ -49,7 +33,7 @@ export async function getRouteInfo(params: RouteInfoParams): Promise<{ distance:
         },
         veiculo: {
             tipo: params.vehicleType,
-            eixos: vehicleToAxleMap[params.vehicleType] || 2
+            eixos: params.axles
         }
     };
 

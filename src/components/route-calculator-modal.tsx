@@ -2,7 +2,7 @@
 'use client'
 
 import React, { useState, useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useFormContext } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { format } from "date-fns";
@@ -22,7 +22,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 
 import {
   Edit2, Calendar as CalendarIcon, Clock, Home, MapPin, Plus, Trash2, Fuel,
-  Wand2, Loader2, Compass
+  Wand2, Loader2, Compass, Minus, ChevronDown
 } from 'lucide-react';
 
 const BrazilFlag = () => (
@@ -86,6 +86,7 @@ const formSchema = z.object({
   fuelCostPerLiter: z.coerce.number().min(0).default(5.80),
   fuelConsumption: z.coerce.number().min(0).default(2.5),
   vehicleType: vehicleTypeEnum.default('CARRETA'),
+  axleCount: z.coerce.number().min(2).max(9).default(5),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -104,9 +105,10 @@ export function RouteCalculatorModal({ isOpen, onOpenChange, onCalculate, isLoad
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      originCity: initialData?.originCity || "São Paulo, SP",
-      destinationCity: initialData?.destinationCity || "Rio de Janeiro, RJ",
-      vehicleType: initialData?.vehicleType || 'CARRETA',
+      originCity: "São Paulo, SP",
+      destinationCity: "Rio de Janeiro, RJ",
+      vehicleType: 'CARRETA',
+      axleCount: 5,
       fuelCostPerLiter: 5.80,
       fuelConsumption: 2.5,
       ...initialData,
@@ -118,6 +120,7 @@ export function RouteCalculatorModal({ isOpen, onOpenChange, onCalculate, isLoad
       form.reset({
         fuelCostPerLiter: 5.80,
         fuelConsumption: 2.5,
+        axleCount: 5,
         ...initialData
       });
     }
@@ -128,6 +131,7 @@ export function RouteCalculatorModal({ isOpen, onOpenChange, onCalculate, isLoad
       origin: `${values.originCity}${values.originAddress ? ', ' + values.originAddress : ''}`,
       destination: `${values.destinationCity}${values.destinationAddress ? ', ' + values.destinationAddress : ''}`,
       vehicleType: values.vehicleType,
+      axleCount: values.axleCount,
       fuelCostPerLiter: values.fuelCostPerLiter,
       fuelConsumption: values.fuelConsumption,
       cargoValue: 100000,
@@ -201,45 +205,22 @@ export function RouteCalculatorModal({ isOpen, onOpenChange, onCalculate, isLoad
                       </div>
                      </FormItem>
                   )} />
-                  <FormField
-                    control={form.control}
-                    name="vehicleType"
-                    render={({ field }) => (
-                        <FormItem>
-                            <Label className="text-xs px-2">Veículo</Label>
-                            <FormControl>
-                            <ToggleGroup
-                                type="single"
-                                variant="outline"
-                                size="sm"
-                                className="h-10"
-                                value={field.value}
-                                onValueChange={(value) => value && field.onChange(value as z.infer<typeof vehicleTypeEnum>)}
-                            >
-                                <ToggleGroupItem value="CAR" aria-label="Carro"><IconCar className="h-6 w-6"/></ToggleGroupItem>
-                                <ToggleGroupItem value="TOCO" aria-label="Toco"><IconToco className="h-6 w-6"/></ToggleGroupItem>
-                                <ToggleGroupItem value="TRUCK" aria-label="Truck"><IconTruck className="h-6 w-6"/></ToggleGroupItem>
-                                <ToggleGroupItem value="CARRETA" aria-label="Carreta"><IconCarreta className="h-6 w-6"/></ToggleGroupItem>
-                            </ToggleGroup>
-                            </FormControl>
-                        </FormItem>
-                    )}
-                    />
+                  <VehiclePopoverSelector />
                 </div>
               </div>
             </div>
 
-            <div className="w-1/3 bg-muted/30 p-6 space-y-6">
-              <div>
-                <Label className="font-semibold">Tipo caminho</Label>
-                <p className="text-xs text-muted-foreground mb-2">Traçar rota priorizando rodovias preferenciais para:</p>
-                <ToggleGroup type="single" defaultValue="fastest" variant="outline" className="w-full justify-start">
-                  <ToggleGroupItem value="fastest">Mais Rápida</ToggleGroupItem>
-                  <ToggleGroupItem value="economic">Econômica</ToggleGroupItem>
-                </ToggleGroup>
-              </div>
+            <div className="w-1/3 bg-muted/30 p-6 space-y-6 flex flex-col">
+               <div className="grow">
+                 <Label className="font-semibold">Tipo caminho</Label>
+                 <p className="text-xs text-muted-foreground mb-2">Traçar rota priorizando rodovias preferenciais para:</p>
+                 <ToggleGroup type="single" defaultValue="economic" variant="outline" className="w-full justify-start">
+                   <ToggleGroupItem value="economic">Econômica</ToggleGroupItem>
+                   <ToggleGroupItem value="fastest">Mais Rápida</ToggleGroupItem>
+                 </ToggleGroup>
+               </div>
 
-              <Button type="submit" size="lg" className="w-full !mt-auto" disabled={isLoading}>
+              <Button type="submit" size="lg" className="w-full" disabled={isLoading}>
                 {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Wand2 className="mr-2 h-4 w-4" />}
                 Calcular Rota
               </Button>
@@ -286,10 +267,91 @@ const LocationInput = ({ icon, label, cityFieldName, addressFieldName }: {
             </FormItem>
           )}
         />
-        <Button variant="ghost" type="button"><Plus className="h-4 w-4" /></Button>
-        <Button variant="ghost" type="button"><Compass className="h-4 w-4" /></Button>
-        <Button variant="ghost" size="icon" type="button" className="h-8 w-8 text-destructive"><Trash2 className="h-4 w-4" /></Button>
       </div>
     </div>
   </div>
 );
+
+const IconAxle = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M5 7h14" />
+    <path d="M5 17h14" />
+    <circle cx="6.5" cy="7" r="1.5" />
+    <circle cx="17.5" cy="7" r="1.5" />
+    <circle cx="6.5" cy="17" r="1.5" />
+    <circle cx="17.5" cy="17" r="1.5" />
+  </svg>
+);
+
+const vehicleCategories = [
+    { id: 'CAR', name: 'Passeio - Carro / Utilitários', icon: IconCar, defaultType: 'CAR', minAxles: 2, maxAxles: 2, description: 'Auto, Caminhonete, Furgão (Com/Sem Semi Reboque ou Reboque)'},
+    { id: 'TRUCK', name: 'Comercial', icon: IconToco, defaultType: 'TRUCK', minAxles: 2, maxAxles: 6, description: 'Caminhão Leve, Furgão, Caminhão (com/sem Reboque), Caminhão Trator (com/sem Semi Reboque)'},
+    { id: 'CARRETA', name: 'Comercial Pesado', icon: IconCarreta, defaultType: 'CARRETA_LS', minAxles: 2, maxAxles: 9, description: 'Semi-reboque, Bitrem, Rodotrem'},
+];
+
+function VehiclePopoverSelector() {
+    const { control, watch, setValue } = useFormContext<FormData>();
+    const vehicleType = watch('vehicleType');
+    const axleCount = watch('axleCount');
+
+    const handleAxleChange = (change: number) => {
+        const currentCategory = vehicleCategories.find(c => c.id === vehicleType) || vehicleCategories[1];
+        const newAxles = Math.max(currentCategory.minAxles, Math.min(currentCategory.maxAxles, axleCount + change));
+        setValue('axleCount', newAxles, { shouldValidate: true });
+    };
+
+    const handleCategorySelect = (category: typeof vehicleCategories[0]) => {
+        setValue('vehicleType', category.id as z.infer<typeof vehicleTypeEnum>);
+        if (axleCount < category.minAxles || axleCount > category.maxAxles) {
+            setValue('axleCount', category.minAxles);
+        }
+    }
+
+    const selectedCategory = vehicleCategories.find(c => c.id === vehicleType) || vehicleCategories[1];
+    const VehicleIcon = selectedCategory.icon;
+
+    return (
+        <Popover>
+            <PopoverTrigger asChild>
+                <Button variant="outline" className="h-14 w-48 justify-between px-3">
+                    <div className="flex items-center gap-2">
+                        <VehicleIcon className="h-8 w-8" />
+                        <div className="text-left">
+                            <p className="text-xs text-muted-foreground">Eixos</p>
+                            <p className="font-semibold">{axleCount}</p>
+                        </div>
+                    </div>
+                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[450px] p-2">
+                <div className="space-y-1">
+                    {vehicleCategories.map(category => (
+                        <div key={category.id} 
+                             onClick={() => handleCategorySelect(category)}
+                             className={cn(
+                                "flex items-center gap-3 p-3 rounded-md cursor-pointer",
+                                vehicleType === category.id && "bg-muted"
+                             )}
+                        >
+                            <category.icon className="h-8 w-8 text-muted-foreground" />
+                            <div className="flex-grow">
+                                <p className="font-semibold">{category.name}</p>
+                                <p className="text-xs text-muted-foreground">{category.description}</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Button size="icon" variant="ghost" className="h-7 w-7 rounded-full" onClick={(e) => { e.stopPropagation(); setValue('axleCount', Math.max(category.minAxles, axleCount - 1)); setValue('vehicleType', category.id as any); }} disabled={axleCount <= category.minAxles}>
+                                    <Minus className="h-4 w-4" />
+                                </Button>
+                                <span className="font-bold w-4 text-center">{axleCount}</span>
+                                <Button size="icon" variant="ghost" className="h-7 w-7 rounded-full" onClick={(e) => { e.stopPropagation(); setValue('axleCount', Math.min(category.maxAxles, axleCount + 1)); setValue('vehicleType', category.id as any); }} disabled={axleCount >= category.maxAxles}>
+                                    <Plus className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </PopoverContent>
+        </Popover>
+    );
+}
