@@ -34,6 +34,7 @@ function getMockData(params: RouteInfoParams): { distance: number; toll: number 
 export async function getRouteInfo(params: RouteInfoParams): Promise<{ distance: number; toll: number }> {
     const apiKey = process.env.ROUTER_API_KEY;
 
+    // Corrected logic: Use mock data only if the API key is missing or is the placeholder.
     if (!apiKey || apiKey === "YOUR_API_KEY_HERE") {
         return getMockData(params);
     }
