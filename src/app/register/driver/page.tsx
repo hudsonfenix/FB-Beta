@@ -36,7 +36,7 @@ export default function DriverRegisterPage() {
   useEffect(() => {
     if (submitted) {
         const timer = setTimeout(() => {
-            router.push('/dashboard/driver');
+            router.push('/register/driver/plans');
         }, 3000);
         return () => clearTimeout(timer);
     }
@@ -60,14 +60,14 @@ export default function DriverRegisterPage() {
                     <div className="mx-auto bg-green-100 rounded-full p-3 w-fit">
                         <CheckCircle className="h-12 w-12 text-green-600" />
                     </div>
-                    <CardTitle className="mt-4">Cadastro realizado com sucesso!</CardTitle>
+                    <CardTitle className="mt-4">Cadastro concluído!</CardTitle>
                     <CardDescription>
-                        Seus dados foram enviados para análise. Você será redirecionado para o painel.
+                        Seus dados foram enviados para análise. Agora, escolha seu plano para continuar.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Button asChild className="w-full">
-                        <Link href="/dashboard/driver">Ir para o Painel</Link>
+                        <Link href="/register/driver/plans">Escolher Plano</Link>
                     </Button>
                 </CardContent>
             </Card>

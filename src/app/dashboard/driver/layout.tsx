@@ -9,7 +9,8 @@ import {
   Settings,
   HelpCircle,
   Truck,
-  Calculator
+  Calculator,
+  Lock,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -26,11 +27,12 @@ import { Logo } from '@/components/logo'
 import { Button } from '@/components/ui/button'
 import { usePathname } from 'next/navigation'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 const navItems = [
   { href: "/dashboard/driver", icon: LayoutGrid, label: "Painel" },
   { href: "/dashboard/driver/freights", icon: Truck, label: "Ver Fretes" },
-  { href: "/dashboard/driver/cost-calculator", icon: Calculator, label: "Calculadora de Custo" },
+  { href: "/dashboard/driver/cost-calculator", icon: Calculator, label: "Calculadora de Custo", isVip: true },
 ];
 
 const helpNavItems = [
@@ -44,6 +46,7 @@ export default function DriverDashboardLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
+  const isVipUser = false; // Hardcoded to demonstrate the locked state.
   
   const isActive = (path: string) => {
     return pathname === path
@@ -58,16 +61,35 @@ export default function DriverDashboardLayout({
           </SidebarHeader>
           <SidebarContent>
             <SidebarMenu>
-              {navItems.map((item) => (
-                <SidebarMenuItem key={item.href}>
-                  <Link href={item.href}>
-                    <SidebarMenuButton isActive={isActive(item.href)}>
-                      <item.icon className="h-4 w-4" />
-                      {item.label}
-                    </SidebarMenuButton>
-                  </Link>
-                </SidebarMenuItem>
-              ))}
+              {navItems.map((item) => {
+                const isDisabled = item.isVip && !isVipUser;
+                const menuButton = (
+                  <SidebarMenuButton isActive={isActive(item.href)} disabled={isDisabled}>
+                    <item.icon className="h-4 w-4" />
+                    {item.label}
+                    {isDisabled && <Lock className="ml-auto h-4 w-4" />}
+                  </SidebarMenuButton>
+                );
+
+                return (
+                  <SidebarMenuItem key={item.href}>
+                    {isDisabled ? (
+                       <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger className="w-full cursor-not-allowed">
+                            {menuButton}
+                          </TooltipTrigger>
+                          <TooltipContent side="right">
+                            <p>Funcionalidade exclusiva para assinantes VIP</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    ) : (
+                      <Link href={item.href}>{menuButton}</Link>
+                    )}
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarContent>
           <SidebarFooter>
