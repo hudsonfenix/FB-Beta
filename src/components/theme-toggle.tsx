@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export function ThemeToggle() {
   const { setTheme } = useTheme()
@@ -42,6 +43,15 @@ export function ThemeToggle() {
 
 export function ThemeToggleGroup() {
   const { setTheme, theme } = useTheme()
+  const [mounted, setMounted] = React.useState(false)
+
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return <Skeleton className="w-full h-10" />
+  }
 
   return (
     <Tabs defaultValue={theme} onValueChange={setTheme} className="w-full">
