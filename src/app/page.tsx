@@ -255,11 +255,11 @@ const AppSection = () => (
                 </div>
             </div>
             <Image
-                src="https://placehold.co/550x550.png"
+                src="https://i.ibb.co/fddLKhMs/fretes-brasil-app.png"
                 width="550"
                 height="550"
                 alt="App"
-                className="mx-auto aspect-square overflow-hidden rounded-xl object-cover sm:w-full"
+                className="mx-auto aspect-square overflow-hidden rounded-xl object-contain sm:w-full"
                 data-ai-hint="app screenshot"
             />
         </div>
