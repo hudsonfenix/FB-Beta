@@ -28,6 +28,7 @@ import { Button } from '@/components/ui/button'
 import { usePathname } from 'next/navigation'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { ThemeToggle } from '@/components/theme-toggle'
 
 const navItems = [
   { href: "/dashboard/driver", icon: LayoutGrid, label: "Painel" },
@@ -121,7 +122,8 @@ export default function DriverDashboardLayout({
                 {/* Top nav can be added here if needed */}
               </nav>
 
-              <div className="flex items-center ml-auto">
+              <div className="flex items-center ml-auto gap-2">
+                <ThemeToggle />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="flex items-center gap-2">
