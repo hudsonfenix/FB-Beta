@@ -1,4 +1,3 @@
-
 'use client'
 
 import { useState } from "react";
@@ -17,6 +16,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Separator } from "@/components/ui/separator";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+
 
 import {
   Edit2, Calendar as CalendarIcon, Clock, Home, MapPin, Plus, Trash2, Fuel, GitCommitHorizontal,
@@ -44,7 +45,6 @@ const formSchema = z.object({
   fuelCostPerLiter: z.coerce.number().min(0).default(5.80),
   fuelConsumption: z.coerce.number().min(0).default(2.5),
   vehicleType: vehicleTypeEnum.default('CARRETA'),
-  // Add other fields from the UI that need validation
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -71,14 +71,12 @@ export function RouteCalculatorModal({ isOpen, onOpenChange, onCalculate, isLoad
   });
 
   const onSubmit = (values: FormData) => {
-    // Map form data to the structure expected by the action
     const apiInput = {
       origin: `${values.originCity}${values.originAddress ? ', ' + values.originAddress : ''}`,
       destination: `${values.destinationCity}${values.destinationAddress ? ', ' + values.destinationAddress : ''}`,
       vehicleType: values.vehicleType,
       fuelCostPerLiter: values.fuelCostPerLiter,
       fuelConsumption: values.fuelConsumption,
-      // Default values for fields not in this form
       cargoValue: 100000,
       cargoWeight: 25000,
       cargoType: "Carga Geral",
@@ -89,6 +87,7 @@ export function RouteCalculatorModal({ isOpen, onOpenChange, onCalculate, isLoad
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-7xl p-0">
+        <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="flex">
             <div className="w-2/3 border-r p-6 space-y-6">
@@ -120,10 +119,9 @@ export function RouteCalculatorModal({ isOpen, onOpenChange, onCalculate, isLoad
                 </div>
               </div>
 
-              {/* Origin / Destination */}
               <div className="space-y-4">
-                <LocationInput icon={<Home />} label="Origem" cityFieldName="originCity" addressFieldName="originAddress" form={form} />
-                <LocationInput icon={<MapPin />} label="Destino" cityFieldName="destinationCity" addressFieldName="destinationAddress" form={form} />
+                <LocationInput icon={<Home />} label="Origem" cityFieldName="originCity" addressFieldName="originAddress" />
+                <LocationInput icon={<MapPin />} label="Destino" cityFieldName="destinationCity" addressFieldName="destinationAddress" />
                 <Button variant="link" type="button" className="p-0 h-auto text-primary"><Plus className="h-4 w-4 mr-1" />Adicionar destino</Button>
               </div>
 
@@ -132,24 +130,32 @@ export function RouteCalculatorModal({ isOpen, onOpenChange, onCalculate, isLoad
               <div className="flex items-end justify-between gap-4">
                 <div className="flex gap-4">
                   <FormField control={form.control} name="fuelCostPerLiter" render={({ field }) => (
-                    <div className="flex items-center gap-2 rounded-full border bg-muted/30 p-2">
-                      <Fuel className="text-muted-foreground" />
-                      <div className="pr-2">
-                        <Label className="text-xs">Combustível</Label>
-                        <Input type="number" step="0.01" {...field} className="h-auto p-0 border-0 bg-transparent text-base font-semibold focus-visible:ring-0" />
+                    <FormItem>
+                      <div className="flex items-center gap-2 rounded-full border bg-muted/30 p-2">
+                        <Fuel className="text-muted-foreground" />
+                        <div className="pr-2">
+                          <Label className="text-xs">Combustível</Label>
+                          <FormControl>
+                            <Input type="number" step="0.01" {...field} className="h-auto p-0 border-0 bg-transparent text-base font-semibold focus-visible:ring-0" />
+                          </FormControl>
+                        </div>
+                        <span className="text-sm text-muted-foreground">R$</span>
                       </div>
-                      <span className="text-sm text-muted-foreground">R$</span>
-                    </div>
+                    </FormItem>
                   )} />
                    <FormField control={form.control} name="fuelConsumption" render={({ field }) => (
-                    <div className="flex items-center gap-2 rounded-full border bg-muted/30 p-2">
-                      <Wand2 className="text-muted-foreground" />
-                       <div className="pr-2">
-                        <Label className="text-xs">Consumo</Label>
-                        <Input type="number" step="0.1" {...field} className="h-auto p-0 border-0 bg-transparent text-base font-semibold focus-visible:ring-0" />
+                     <FormItem>
+                      <div className="flex items-center gap-2 rounded-full border bg-muted/30 p-2">
+                        <Wand2 className="text-muted-foreground" />
+                        <div className="pr-2">
+                          <Label className="text-xs">Consumo</Label>
+                          <FormControl>
+                            <Input type="number" step="0.1" {...field} className="h-auto p-0 border-0 bg-transparent text-base font-semibold focus-visible:ring-0" />
+                          </FormControl>
+                        </div>
+                        <span className="text-sm text-muted-foreground">KM/L</span>
                       </div>
-                      <span className="text-sm text-muted-foreground">KM/L</span>
-                    </div>
+                     </FormItem>
                   )} />
                    <div className="flex items-center gap-2 rounded-full border bg-muted/30 p-2">
                       <GitCommitHorizontal className="text-muted-foreground" />
@@ -192,23 +198,25 @@ export function RouteCalculatorModal({ isOpen, onOpenChange, onCalculate, isLoad
               </div>
 
               <div>
-                <Controller
-                  name="vehicleType"
+                <FormField
                   control={form.control}
+                  name="vehicleType"
                   render={({ field }) => (
-                    <ToggleGroup
-                      type="single"
-                      variant="outline"
-                      className="w-full justify-start"
-                      value={field.value}
-                      onValueChange={(value) => value && field.onChange(value as z.infer<typeof vehicleTypeEnum>)}
-                    >
-                      <ToggleGroupItem value="CAR" className="flex-1"><Car /></ToggleGroupItem>
-                      <ToggleGroupItem value="VLC" className="flex-1"><Truck className="h-5 w-5"/></ToggleGroupItem>
-                      <ToggleGroupItem value="CARRETA" className="flex-1"><Tractor/></ToggleGroupItem>
-                      <ToggleGroupItem value="TRUCK" className="flex-1"><Truck/></ToggleGroupItem>
-                      <ToggleGroupItem value="BITRUCK" className="flex-1"><BusFront/></ToggleGroupItem>
-                    </ToggleGroup>
+                    <FormItem>
+                      <ToggleGroup
+                        type="single"
+                        variant="outline"
+                        className="w-full justify-start"
+                        value={field.value}
+                        onValueChange={(value) => value && field.onChange(value as z.infer<typeof vehicleTypeEnum>)}
+                      >
+                        <ToggleGroupItem value="CAR" className="flex-1"><Car /></ToggleGroupItem>
+                        <ToggleGroupItem value="VLC" className="flex-1"><Truck className="h-5 w-5"/></ToggleGroupItem>
+                        <ToggleGroupItem value="CARRETA" className="flex-1"><Tractor/></ToggleGroupItem>
+                        <ToggleGroupItem value="TRUCK" className="flex-1"><Truck/></ToggleGroupItem>
+                        <ToggleGroupItem value="BITRUCK" className="flex-1"><BusFront/></ToggleGroupItem>
+                      </ToggleGroup>
+                    </FormItem>
                   )}
                 />
               </div>
@@ -220,36 +228,50 @@ export function RouteCalculatorModal({ isOpen, onOpenChange, onCalculate, isLoad
             </div>
           </div>
         </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
 }
 
-const LocationInput = ({ icon, label, cityFieldName, addressFieldName, form }: any) => (
+const LocationInput = ({ icon, label, cityFieldName, addressFieldName }: {
+  icon: React.ReactNode;
+  label: string;
+  cityFieldName: "originCity" | "destinationCity";
+  addressFieldName: "originAddress" | "destinationAddress";
+}) => (
   <div className="flex items-start gap-3">
     <div className="pt-2">{icon}</div>
-    <div className="flex-grow">
+    <div className="flex-grow space-y-1">
       <Label className="text-xs text-muted-foreground">{label}</Label>
       <div className="flex items-center gap-2">
         <BrazilFlag />
-        <FormField control={form.control} name={cityFieldName} render={({ field }: any) => (
-          <Input placeholder="Cidade" {...field} className="flex-grow" />
-        )} />
-        <FormField control={form.control} name={addressFieldName} render={({ field }: any) => (
-          <Input placeholder="Endereço" {...field} className="flex-grow" />
-        )} />
+        <FormField
+          name={cityFieldName}
+          render={({ field }) => (
+            <FormItem className="flex-grow">
+              <FormControl>
+                <Input placeholder="Cidade" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          name={addressFieldName}
+          render={({ field }) => (
+            <FormItem className="flex-grow">
+              <FormControl>
+                <Input placeholder="Endereço" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <Button variant="ghost" type="button"><Plus className="h-4 w-4" /></Button>
         <Button variant="ghost" type="button"><Compass className="h-4 w-4" /></Button>
         <Button variant="ghost" size="icon" type="button" className="h-8 w-8 text-destructive"><Trash2 className="h-4 w-4" /></Button>
       </div>
-      <FormMessage form={form} name={cityFieldName} />
     </div>
   </div>
 );
-
-const FormMessage = ({ form, name }: { form: any, name: string }) => {
-  const { errors } = form.formState;
-  const error = errors[name];
-  if (!error) return null;
-  return <p className="text-sm text-destructive mt-1">{error.message as string}</p>;
-};
