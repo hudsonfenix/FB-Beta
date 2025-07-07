@@ -17,9 +17,21 @@ type RouteInfoParams = {
 
 export async function getRouteInfo(params: RouteInfoParams): Promise<{ distance: number; toll: number }> {
     const apiKey = process.env.ROUTER_API_KEY;
+
     if (!apiKey || apiKey === "YOUR_API_KEY_HERE") {
-        console.error("ROUTER_API_KEY is not set in environment variables.");
-        throw new Error("A chave da API (ROUTER_API_KEY) não está configurada no arquivo .env.");
+        console.warn("**********************************************************************************");
+        console.warn("AVISO: A chave da API (ROUTER_API_KEY) não está configurada.");
+        console.warn("Usando dados de exemplo para o cálculo da rota.");
+        console.warn("Adicione sua chave da Webrouter ao arquivo .env para obter dados em tempo real.");
+        console.warn("**********************************************************************************");
+        
+        // Retorna dados de exemplo para fins de demonstração
+        const mockDistance = Math.floor(Math.random() * (2000 - 200 + 1)) + 200;
+        const mockToll = (mockDistance * 0.12) + (params.axles * 11.5);
+        return { 
+            distance: parseFloat(mockDistance.toFixed(2)), 
+            toll: parseFloat(mockToll.toFixed(2)) 
+        };
     }
 
     const apiUrl = 'https://lway.webrouter.com.br/RouterService/router/api/calcular';
@@ -47,13 +59,13 @@ export async function getRouteInfo(params: RouteInfoParams): Promise<{ distance:
             body: JSON.stringify(requestBody),
         });
 
-        if (!response.ok) {
-            const errorBody = await response.text();
-            console.error(`API Error: ${response.status} ${response.statusText}`, errorBody);
-            throw new Error(`Failed to fetch route info. Status: ${response.status}`);
-        }
-
         const data = await response.json();
+
+        if (!response.ok || data.status === 'ERRO') {
+            const errorMessage = data.mensagem_retorno || `Erro na API: ${response.statusText}`;
+            console.error("Erro da API Webrouter:", errorMessage);
+            throw new Error(`Erro ao calcular rota: ${errorMessage}`);
+        }
         
         const distance = data.distancia_total_km || 0;
         const toll = data.custo_total_pedagio || 0;
@@ -61,8 +73,10 @@ export async function getRouteInfo(params: RouteInfoParams): Promise<{ distance:
         return { distance, toll };
 
     } catch (error) {
-        console.error("Error calling Webrouter API:", error);
-        // Re-throw the error so it can be handled by the caller.
-        throw new Error('Failed to communicate with Webrouter API.');
+        console.error("Falha ao chamar a API Webrouter:", error);
+        if (error instanceof Error) {
+            throw error; 
+        }
+        throw new Error('Falha na comunicação com a API de roteirização.');
     }
 }
