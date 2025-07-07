@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Logo } from '@/components/logo'
-import { Upload } from 'lucide-react'
+import { Upload, CheckCircle } from 'lucide-react'
 import { Progress } from '@/components/ui/progress'
 
 const vehicleTypes = {
@@ -30,17 +30,50 @@ const trackerOptions = ["Não tem rastreador", "Tem, mas não sei a marca", "Aut
 
 export default function DriverRegisterPage() {
   const [step, setStep] = useState(1);
+  const [submitted, setSubmitted] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    if (submitted) {
+        const timer = setTimeout(() => {
+            router.push('/dashboard');
+        }, 3000);
+        return () => clearTimeout(timer);
+    }
+  }, [submitted, router]);
 
   const nextStep = () => setStep(prev => prev + 1);
   const prevStep = () => setStep(prev => prev - 1);
 
   const onFinalSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    router.push('/dashboard');
+    setSubmitted(true);
   }
 
   const progressValue = (step / 3) * 100;
+  
+  if (submitted) {
+    return (
+        <div className="flex min-h-screen items-center justify-center p-4">
+            <Card className="w-full max-w-md text-center p-6">
+                <CardHeader>
+                    <div className="mx-auto bg-green-100 rounded-full p-3 w-fit">
+                        <CheckCircle className="h-12 w-12 text-green-600" />
+                    </div>
+                    <CardTitle className="mt-4">Cadastro realizado com sucesso!</CardTitle>
+                    <CardDescription>
+                        Seus dados foram enviados para análise. Você será redirecionado para o painel.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Button asChild className="w-full">
+                        <Link href="/dashboard">Ir para o Painel</Link>
+                    </Button>
+                </CardContent>
+            </Card>
+        </div>
+    )
+  }
   
   return (
     <div className="flex min-h-screen items-center justify-center p-4">

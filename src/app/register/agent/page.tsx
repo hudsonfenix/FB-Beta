@@ -1,4 +1,5 @@
 'use client'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -7,13 +8,47 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Logo } from '@/components/logo'
+import { CheckCircle } from 'lucide-react'
 
 export default function AgentRegisterPage() {
+    const [submitted, setSubmitted] = useState(false);
     const router = useRouter();
+
+    useEffect(() => {
+        if (submitted) {
+            const timer = setTimeout(() => {
+                router.push('/dashboard');
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [submitted, router]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        router.push('/dashboard');
+        setSubmitted(true);
+    }
+
+    if (submitted) {
+        return (
+            <div className="flex min-h-screen items-center justify-center p-4">
+                <Card className="w-full max-w-md text-center p-6">
+                    <CardHeader>
+                        <div className="mx-auto bg-green-100 rounded-full p-3 w-fit">
+                            <CheckCircle className="h-12 w-12 text-green-600" />
+                        </div>
+                        <CardTitle className="mt-4">Cadastro realizado com sucesso!</CardTitle>
+                        <CardDescription>
+                            Você será redirecionado para o painel em alguns instantes.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Button asChild className="w-full">
+                            <Link href="/dashboard">Ir para o Painel</Link>
+                        </Button>
+                    </CardContent>
+                </Card>
+            </div>
+        )
     }
 
     return (
