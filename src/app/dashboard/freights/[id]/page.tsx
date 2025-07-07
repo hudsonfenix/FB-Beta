@@ -11,6 +11,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Separator } from '@/components/ui/separator'
 import { ArrowLeft, Phone, MessageSquare, Star as StarIcon } from 'lucide-react'
 import { cn } from "@/lib/utils"
+import { CostCalculatorSection } from '@/app/dashboard/freights/cost-calculator-section'
 
 const DetailItem = ({ label, value, className }: { label: string; value: React.ReactNode; className?: string }) => (
   <div className={cn("flex flex-col gap-1", className)}>
@@ -120,6 +121,11 @@ export default function FreightDetailPage({ params }: { params: { id: string } }
             <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Observações</p>
             <p className="mt-2 text-base">{details.observations}</p>
           </div>
+
+          <Separator />
+
+          <CostCalculatorSection freight={freight} />
+          
         </CardContent>
         <CardFooter className="bg-muted/50 p-4 flex flex-col sm:flex-row gap-3">
             <Button size="lg" className="w-full sm:w-auto flex-1">
