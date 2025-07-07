@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Moon, Sun } from "lucide-react"
+import { Moon, Sun, Laptop } from "lucide-react"
 import { useTheme } from "next-themes"
 
 import { Button } from "@/components/ui/button"
@@ -11,6 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export function ThemeToggle() {
   const { setTheme } = useTheme()
@@ -36,5 +37,28 @@ export function ThemeToggle() {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+  )
+}
+
+export function ThemeToggleGroup() {
+  const { setTheme, theme } = useTheme()
+
+  return (
+    <Tabs defaultValue={theme} onValueChange={setTheme} className="w-full">
+      <TabsList className="grid w-full grid-cols-3">
+        <TabsTrigger value="light" className="flex items-center gap-1">
+          <Sun className="h-4 w-4" />
+          <span>Claro</span>
+        </TabsTrigger>
+        <TabsTrigger value="dark" className="flex items-center gap-1">
+          <Moon className="h-4 w-4" />
+          <span>Escuro</span>
+        </TabsTrigger>
+        <TabsTrigger value="system" className="flex items-center gap-1">
+          <Laptop className="h-4 w-4" />
+          <span>Sistema</span>
+        </TabsTrigger>
+      </TabsList>
+    </Tabs>
   )
 }

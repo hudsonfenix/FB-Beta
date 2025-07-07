@@ -28,7 +28,7 @@ import { Logo } from '@/components/logo'
 import { Button } from '@/components/ui/button'
 import { usePathname } from 'next/navigation'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { ThemeToggle } from '@/components/theme-toggle'
+import { ThemeToggle, ThemeToggleGroup } from '@/components/theme-toggle'
 
 const navItems = [
   { href: "/dashboard/company", icon: LayoutGrid, label: "Painel" },
@@ -76,6 +76,9 @@ export default function CompanyDashboardLayout({
             </SidebarMenu>
           </SidebarContent>
           <SidebarFooter>
+            <div className="p-2 md:hidden">
+                <ThemeToggleGroup />
+            </div>
              <SidebarMenu>
                 {helpNavItems.map((item) => (
                     <SidebarMenuItem key={item.href}>
@@ -99,13 +102,19 @@ export default function CompanyDashboardLayout({
                   <SidebarTrigger />
                 </div>
               </div>
+
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:hidden">
+                  <Logo />
+              </div>
               
               <nav className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-6 text-sm font-medium md:flex">
                 {/* Top nav can be added here if needed */}
               </nav>
 
               <div className="flex items-center ml-auto gap-2">
-                <ThemeToggle />
+                <div className="hidden md:block">
+                  <ThemeToggle />
+                </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="flex items-center gap-2">
