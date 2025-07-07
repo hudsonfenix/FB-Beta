@@ -28,15 +28,17 @@ const CalculateOperationalCostInputSchema = z.object({
   cargoValue: z.number().describe('The declared value of the cargo.'),
   cargoWeight: z.number().describe('The weight of the cargo in kilograms.'),
   cargoType: z.string().describe('The type of cargo being transported.'),
+  freightValue: z.number().describe('The price offered for the freight.'),
 });
 export type CalculateOperationalCostInput = z.infer<typeof CalculateOperationalCostInputSchema>;
 
 const CalculateOperationalCostOutputSchema = z.object({
-  estimatedCost: z.number().describe('The estimated operational cost for the freight.'),
-  minimumFreightValue: z
-    .number()
-    .describe('The minimum freight value based on ANTT tables (if applicable).'),
-  profitabilityAnalysis: z.string().describe('An analysis of the freight profitability.'),
+  totalOperationalCost: z.number().describe('The total operational cost for the freight (fuel + tolls).'),
+  minimumFreightValue: z.number().describe('The minimum freight value based on ANTT tables.'),
+  profitabilityAnalysis: z.string().describe('An analysis of the freight profitability in Portuguese.'),
+  fuelCost: z.number().describe('The total cost of fuel for the route.'),
+  distance: z.number().describe('The total distance in kilometers.'),
+  tollCost: z.number().describe('The total cost of tolls for the route.'),
 });
 export type CalculateOperationalCostOutput = z.infer<typeof CalculateOperationalCostOutputSchema>;
 
@@ -47,52 +49,72 @@ export async function calculateOperationalCost(
   return calculateOperationalCostFlow(input);
 }
 
-const getRouteInfoTool = ai.defineTool(
-  {
-    name: 'getRouteInfo',
-    description: 'Get distance in kilometers and total toll cost for a route.',
-    inputSchema: z.object({
-      origin: z.string(),
-      destination: z.string(),
-      vehicleType: vehicleTypeEnum,
-      axleCount: z.number(),
-    }),
-    outputSchema: z.object({
-      distance: z.number(),
-      toll: z.number(),
-    }),
-  },
-  async (input) => getRouteInfo({ ...input, axles: input.axleCount })
-);
+const PromptInputSchema = CalculateOperationalCostInputSchema.extend({
+  distance: z.number().describe('The total distance in kilometers for the route.'),
+  tollCost: z.number().describe('The total toll cost for the route.'),
+});
+
+const PromptOutputSchema = z.object({
+  totalOperationalCost: z.number().describe('The total operational cost for the freight (fuel + tolls).'),
+  minimumFreightValue: z.number().describe('The minimum freight value based on ANTT tables.'),
+  profitabilityAnalysis: z.string().describe('An analysis of the freight profitability in Portuguese.'),
+  fuelCost: z.number().describe('The total cost of fuel for the route.'),
+});
 
 
 const calculateOperationalCostPrompt = ai.definePrompt({
   name: 'calculateOperationalCostPrompt',
-  input: {schema: CalculateOperationalCostInputSchema},
-  output: {schema: CalculateOperationalCostOutputSchema},
-  tools: [getRouteInfoTool],
-  prompt: `You are an expert in logistics and freight cost calculation.
+  input: {schema: PromptInputSchema},
+  output: {schema: PromptOutputSchema},
+  prompt: `Você é um especialista em logística e cálculo de custos de frete no Brasil. Suas respostas devem ser em português.
 
-  Your task is to provide a detailed operational cost analysis for a freight trip.
+Sua tarefa é fornecer uma análise detalhada de custos operacionais para uma viagem de frete, com base nos dados fornecidos.
 
-  1.  First, you **MUST** use the 'getRouteInfo' tool to obtain the exact distance (in km) and total toll cost for the trip between the given origin and destination for the specified vehicle type and axle count.
-  2.  Once you have the distance and toll cost from the tool, calculate the total fuel cost. The formula is: \`(distance / fuelConsumption) * fuelCostPerLiter\`.
-  3.  The total estimated operational cost is the sum of the total fuel cost and the total toll cost.
-  4.  Provide a profitability analysis based on the calculated operational cost against the cargo value.
-  5.  Finally, estimate the minimum freight value based on ANTT tables. If you cannot determine this, set it to 0.
+Dados da Rota (já calculados):
+- Distância: {{{distance}}} km
+- Custo de Pedágio: R$ {{{tollCost}}}
 
-  User-provided data:
-  Origin: {{{origin}}}
-  Destination: {{{destination}}}
-  Vehicle Type: {{{vehicleType}}}
-  Axle Count: {{{axleCount}}}
-  Fuel Cost per Liter: {{{fuelCostPerLiter}}}
-  Fuel Consumption (km/l): {{{fuelConsumption}}}
-  Cargo Value: {{{cargoValue}}}
-  Cargo Weight: {{{cargoWeight}}}
-  Cargo Type: {{{cargoType}}}
+Dados do Usuário:
+- Origem: {{{origin}}}
+- Destino: {{{destination}}}
+- Tipo de Veículo: {{{vehicleType}}}
+- Número de Eixos: {{{axleCount}}}
+- Custo do Combustível por Litro: R$ {{{fuelCostPerLiter}}}
+- Consumo de Combustível (km/l): {{{fuelConsumption}}}
+- Tipo de Carga: {{{cargoType}}}
+- Valor do Frete Oferecido: R$ {{{freightValue}}}
 
-  Respond with JSON format.`,
+Siga estes passos:
+1.  **Calcular Custo do Combustível**: Use a fórmula: \`(distance / fuelConsumption) * fuelCostPerLiter\`.
+2.  **Calcular Custo Operacional Total**: Some o Custo de Pedágio (dado fornecido) com o Custo de Combustível que você calculou.
+3.  **Calcular Piso Mínimo de Frete (ANTT)**:
+    *   Use a distância e o número de eixos fornecidos.
+    *   Consulte a tabela simplificada abaixo para encontrar o 'Custo de Deslocamento (R$/km)' e 'Custo de Carga/Descarga (R$)'.
+    *   A fórmula é: \`(distance * "Custo de Deslocamento") + "Custo de Carga/Descarga"\`.
+    *   Para a 'Tipo de Carga', use 'Granel Sólido' se o produto for grãos, fertilizantes, etc. Use 'Frigorificada' para cargas refrigeradas. Para todos os outros, use 'Carga Geral'.
+    *   Se o número exato de eixos não estiver na tabela para o tipo de carga, use a linha com o número de eixos mais próximo e menor.
+
+    **Tabela Simplificada de Piso Mínimo de Frete (Valores Hipotéticos):**
+    | Tipo de Carga   | Eixos | Custo de Deslocamento (R$/km) | Custo de Carga/Descarga (R$) |
+    |-----------------|-------|-------------------------------|------------------------------|
+    | Carga Geral     | 2     | 2.55                          | 150.00                       |
+    | Carga Geral     | 3     | 3.10                          | 180.00                       |
+    | Carga Geral     | 5     | 4.20                          | 240.00                       |
+    | Carga Geral     | 6     | 4.75                          | 270.00                       |
+    | Carga Geral     | 7     | 5.30                          | 300.00                       |
+    | Carga Geral     | 9     | 6.40                          | 360.00                       |
+    | Granel Sólido   | 5     | 3.80                          | 220.00                       |
+    | Granel Sólido   | 7     | 4.85                          | 280.00                       |
+    | Granel Sólido   | 9     | 5.90                          | 340.00                       |
+    | Frigorificada   | 6     | 5.10                          | 350.00                       |
+
+4.  **Análise de Rentabilidade**:
+    *   Forneça uma análise concisa em português.
+    *   Compare o 'Valor do Frete Oferecido' com o 'Custo Operacional Total' para determinar a margem bruta.
+    *   Indique se o valor oferecido está acima ou abaixo do 'Piso Mínimo de Frete (ANTT)'.
+    *   Exemplo: "Com um custo operacional de R$ X e um frete de R$ Y, a margem bruta é de R$ Z. O valor está {acima/abaixo} do piso mínimo da ANTT, sugerindo uma viagem {rentável/não rentável}."
+
+Responda no formato JSON.`,
 });
 
 const calculateOperationalCostFlow = ai.defineFlow(
@@ -101,8 +123,37 @@ const calculateOperationalCostFlow = ai.defineFlow(
     inputSchema: CalculateOperationalCostInputSchema,
     outputSchema: CalculateOperationalCostOutputSchema,
   },
-  async input => {
-    const {output} = await calculateOperationalCostPrompt(input);
-    return output!;
+  async (input) => {
+    // 1. Call the tool to get route info
+    const routeInfo = await getRouteInfo({
+      origin: input.origin,
+      destination: input.destination,
+      vehicleType: input.vehicleType,
+      axles: input.axleCount,
+    });
+
+    // 2. Prepare the input for the prompt, including the fetched data
+    const promptInput = {
+      ...input,
+      distance: routeInfo.distance,
+      tollCost: routeInfo.toll,
+    };
+
+    // 3. Call the prompt, which now has all the data it needs
+    const { output: aiResult } = await calculateOperationalCostPrompt(promptInput);
+
+    if (!aiResult) {
+      throw new Error('AI failed to generate cost analysis.');
+    }
+    
+    // 4. Combine the AI result with the direct data and return
+    return {
+      totalOperationalCost: aiResult.totalOperationalCost,
+      minimumFreightValue: aiResult.minimumFreightValue,
+      profitabilityAnalysis: aiResult.profitabilityAnalysis,
+      fuelCost: aiResult.fuelCost,
+      distance: routeInfo.distance,
+      tollCost: routeInfo.toll,
+    };
   }
 );
