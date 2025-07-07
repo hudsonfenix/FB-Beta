@@ -22,7 +22,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 
 import {
   Edit2, Calendar as CalendarIcon, Clock, Home, MapPin, Plus, Trash2, Fuel,
-  Car, Wand2, Loader2, Compass, Caravan
+  Wand2, Loader2, Compass
 } from 'lucide-react';
 
 const BrazilFlag = () => (
@@ -33,13 +33,44 @@ const BrazilFlag = () => (
   </svg>
 );
 
-const ArticulatedTruckIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-        <path d="M21 17H15V9H21V17Z" />
-        <path d="M15 13H9V6H13L15 7.5V13Z" />
-        <circle cx="7" cy="17" r="2" />
-        <circle cx="18" cy="17" r="2" />
-    </svg>
+const IconCar = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M19,17H5c-1.1,0-2-0.9-2-2V12c0-1.1,0.9-2,2-2h14c1.1,0,2,0.9,2,2v3C21,16.1,20.1,17,19,17z" />
+    <path d="M5,10L8,5h8l3,5" />
+    <circle cx="7.5" cy="17.5" r="1.5" />
+    <circle cx="16.5" cy="17.5" r="1.5" />
+  </svg>
+);
+
+const IconToco = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <rect x="2" y="9" width="14" height="9" rx="1" />
+    <path d="M16,9H20c1.1,0,2,0.9,2,2v3c0,1.1-0.9,2-2,2h-1" />
+    <path d="M6,9V6c0-1.1,0.9-2,2-2h3l2,2" />
+    <circle cx="6" cy="18" r="2" />
+    <circle cx="18" cy="18" r="2" />
+  </svg>
+);
+
+const IconTruck = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <rect x="2" y="7" width="16" height="11" rx="1" />
+    <path d="M18,7H21c0.6,0,1,0.4,1,1v8c0,0.6-0.4,1-1,1h-1" />
+    <circle cx="7" cy="18" r="2" />
+    <circle cx="18" cy="18" r="2" />
+    <path d="M18,12H22" />
+  </svg>
+);
+
+const IconCarreta = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M2,9h10v9H2V9z" />
+    <path d="M12,14H16c1.1,0,2-0.9,2-2V8c0-1.1-0.9-2-2-2h-1l-2,3" />
+    <path d="M21.5,14H22c0.6,0,1,0.4,1,1v1c0,0.6-0.4,1-1,1h-0.5" />
+    <circle cx="5" cy="18" r="1.5" />
+    <circle cx="9" cy="18" r="1.5" />
+    <circle cx="18" cy="18" r="1.5" />
+  </svg>
 );
 
 const vehicleTypeEnum = z.enum([
@@ -185,19 +216,15 @@ export function RouteCalculatorModal({ isOpen, onOpenChange, onCalculate, isLoad
                                 value={field.value}
                                 onValueChange={(value) => value && field.onChange(value as z.infer<typeof vehicleTypeEnum>)}
                             >
-                                <ToggleGroupItem value="CAR" aria-label="Carro"><Car /></ToggleGroupItem>
-                                <ToggleGroupItem value="VLC" aria-label="Veículo Leve"><Caravan /></ToggleGroupItem>
-                                <ToggleGroupItem value="CARRETA" aria-label="Carreta"><ArticulatedTruckIcon className="h-5 w-5"/></ToggleGroupItem>
+                                <ToggleGroupItem value="CAR" aria-label="Carro"><IconCar className="h-6 w-6"/></ToggleGroupItem>
+                                <ToggleGroupItem value="TOCO" aria-label="Toco"><IconToco className="h-6 w-6"/></ToggleGroupItem>
+                                <ToggleGroupItem value="TRUCK" aria-label="Truck"><IconTruck className="h-6 w-6"/></ToggleGroupItem>
+                                <ToggleGroupItem value="CARRETA" aria-label="Carreta"><IconCarreta className="h-6 w-6"/></ToggleGroupItem>
                             </ToggleGroup>
                             </FormControl>
                         </FormItem>
                     )}
                     />
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center space-x-2"><Checkbox id="optimize" /><Label htmlFor="optimize" className="font-normal">Otimizar rota</Label></div>
-                  <div className="flex items-center space-x-2"><Checkbox id="return" /><Label htmlFor="return" className="font-normal">Calcular volta</Label></div>
                 </div>
               </div>
             </div>
@@ -208,7 +235,6 @@ export function RouteCalculatorModal({ isOpen, onOpenChange, onCalculate, isLoad
                 <p className="text-xs text-muted-foreground mb-2">Traçar rota priorizando rodovias preferenciais para:</p>
                 <ToggleGroup type="single" defaultValue="fastest" variant="outline" className="w-full justify-start">
                   <ToggleGroupItem value="fastest">Mais Rápida</ToggleGroupItem>
-                  <ToggleGroupItem value="shortest">Curta</ToggleGroupItem>
                   <ToggleGroupItem value="economic">Econômica</ToggleGroupItem>
                 </ToggleGroup>
               </div>
