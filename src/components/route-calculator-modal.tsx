@@ -21,8 +21,8 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 
 
 import {
-  Edit2, Calendar as CalendarIcon, Clock, Home, MapPin, Plus, Trash2, Fuel, GitCommitHorizontal,
-  Car, Truck, Caravan, Wand2, Loader2, Compass
+  Edit2, Calendar as CalendarIcon, Clock, Home, MapPin, Plus, Trash2, Fuel,
+  Car, Wand2, Loader2, Compass, Caravan
 } from 'lucide-react';
 
 const BrazilFlag = () => (
@@ -31,6 +31,15 @@ const BrazilFlag = () => (
     <path d="M500 85L890 350L500 615L110 350L500 85Z" fill="#ffcc29"/>
     <circle cx="500" cy="350" r="175" fill="#0033a0"/>
   </svg>
+);
+
+const ArticulatedTruckIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+        <path d="M21 17H15V9H21V17Z" />
+        <path d="M15 13H9V6H13L15 7.5V13Z" />
+        <circle cx="7" cy="17" r="2" />
+        <circle cx="18" cy="17" r="2" />
+    </svg>
 );
 
 const vehicleTypeEnum = z.enum([
@@ -132,7 +141,7 @@ export function RouteCalculatorModal({ isOpen, onOpenChange, onCalculate, isLoad
               <Separator />
 
               <div className="flex items-end justify-between gap-4">
-                <div className="flex gap-4">
+                <div className="flex gap-4 items-end">
                   <FormField control={form.control} name="fuelCostPerLiter" render={({ field }) => (
                     <FormItem>
                       <div className="flex items-center gap-2 rounded-full border bg-muted/30 p-2">
@@ -161,14 +170,29 @@ export function RouteCalculatorModal({ isOpen, onOpenChange, onCalculate, isLoad
                       </div>
                      </FormItem>
                   )} />
-                   <div className="flex items-center gap-2 rounded-full border bg-muted/30 p-2">
-                      <GitCommitHorizontal className="text-muted-foreground" />
-                       <div className="pr-2">
-                        <Label className="text-xs">Eixos</Label>
-                        <Input type="number" defaultValue="5" className="h-auto p-0 border-0 bg-transparent text-base font-semibold focus-visible:ring-0" />
-                      </div>
-                       <Truck className="text-muted-foreground" />
-                    </div>
+                  <FormField
+                    control={form.control}
+                    name="vehicleType"
+                    render={({ field }) => (
+                        <FormItem>
+                            <Label className="text-xs px-2">Veículo</Label>
+                            <FormControl>
+                            <ToggleGroup
+                                type="single"
+                                variant="outline"
+                                size="sm"
+                                className="h-10"
+                                value={field.value}
+                                onValueChange={(value) => value && field.onChange(value as z.infer<typeof vehicleTypeEnum>)}
+                            >
+                                <ToggleGroupItem value="CAR" aria-label="Carro"><Car /></ToggleGroupItem>
+                                <ToggleGroupItem value="VLC" aria-label="Veículo Leve"><Caravan /></ToggleGroupItem>
+                                <ToggleGroupItem value="CARRETA" aria-label="Carreta"><ArticulatedTruckIcon className="h-5 w-5"/></ToggleGroupItem>
+                            </ToggleGroup>
+                            </FormControl>
+                        </FormItem>
+                    )}
+                    />
                 </div>
 
                 <div className="flex items-center gap-4">
@@ -185,34 +209,11 @@ export function RouteCalculatorModal({ isOpen, onOpenChange, onCalculate, isLoad
                 <ToggleGroup type="single" defaultValue="fastest" variant="outline" className="w-full justify-start">
                   <ToggleGroupItem value="fastest">Mais Rápida</ToggleGroupItem>
                   <ToggleGroupItem value="shortest">Curta</ToggleGroupItem>
-                  <ToggleGroupItem value="most-curvy">Mais Curta</ToggleGroupItem>
                   <ToggleGroupItem value="economic">Econômica</ToggleGroupItem>
                 </ToggleGroup>
               </div>
 
-              <div>
-                <FormField
-                  control={form.control}
-                  name="vehicleType"
-                  render={({ field }) => (
-                    <FormItem>
-                      <ToggleGroup
-                        type="single"
-                        variant="outline"
-                        className="w-full justify-start"
-                        value={field.value}
-                        onValueChange={(value) => value && field.onChange(value as z.infer<typeof vehicleTypeEnum>)}
-                      >
-                        <ToggleGroupItem value="CAR" className="flex-1"><Car /></ToggleGroupItem>
-                        <ToggleGroupItem value="VLC" className="flex-1"><Caravan /></ToggleGroupItem>
-                        <ToggleGroupItem value="CARRETA" className="flex-1"><Truck className="h-5 w-5"/></ToggleGroupItem>
-                      </ToggleGroup>
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <Button type="submit" size="lg" className="w-full" disabled={isLoading}>
+              <Button type="submit" size="lg" className="w-full !mt-auto" disabled={isLoading}>
                 {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Wand2 className="mr-2 h-4 w-4" />}
                 Calcular Rota
               </Button>
