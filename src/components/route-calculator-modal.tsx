@@ -22,7 +22,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 
 import {
   Edit2, Calendar as CalendarIcon, Clock, Home, MapPin, Plus, Trash2, Fuel, GitCommitHorizontal,
-  Car, Truck, Tractor, BusFront, Wand2, Loader2, Compass, Upload, Download, FileText, Link2
+  Car, Truck, Caravan, Wand2, Loader2, Compass
 } from 'lucide-react';
 
 const BrazilFlag = () => (
@@ -179,17 +179,6 @@ export function RouteCalculatorModal({ isOpen, onOpenChange, onCalculate, isLoad
             </div>
 
             <div className="w-1/3 bg-muted/30 p-6 space-y-6">
-              <h3 className="font-semibold">Mais opções da rota</h3>
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2"><Checkbox id="search-gas" /><Label htmlFor="search-gas" className="font-normal">Pesquisar Posto de combustível</Label></div>
-                <div className="flex items-center space-x-2"><Checkbox id="search-poi" /><Label htmlFor="search-poi" className="font-normal">Pesquisar pontos de interesse</Label></div>
-                <div className="flex items-center space-x-2"><Checkbox id="prioritize-highways" /><Label htmlFor="prioritize-highways" className="font-normal">Priorizar as rodovias</Label></div>
-                <div className="flex items-center space-x-2"><Checkbox id="avoid-tolls" /><Label htmlFor="avoid-tolls" className="font-normal">Evitar pedágio</Label></div>
-                <div className="flex items-center space-x-2"><Checkbox id="avoid-ferries" /><Label htmlFor="avoid-ferries" className="font-normal">Evitar balsa</Label></div>
-              </div>
-
-              <Separator />
-
               <div>
                 <Label className="font-semibold">Tipo caminho</Label>
                 <p className="text-xs text-muted-foreground mb-2">Traçar rota priorizando rodovias preferenciais para:</p>
@@ -215,8 +204,8 @@ export function RouteCalculatorModal({ isOpen, onOpenChange, onCalculate, isLoad
                         onValueChange={(value) => value && field.onChange(value as z.infer<typeof vehicleTypeEnum>)}
                       >
                         <ToggleGroupItem value="CAR" className="flex-1"><Car /></ToggleGroupItem>
-                        <ToggleGroupItem value="VLC" className="flex-1"><Truck className="h-5 w-5"/></ToggleGroupItem>
-                        <ToggleGroupItem value="CARRETA" className="flex-1"><Tractor/></ToggleGroupItem>
+                        <ToggleGroupItem value="VLC" className="flex-1"><Caravan /></ToggleGroupItem>
+                        <ToggleGroupItem value="CARRETA" className="flex-1"><Truck className="h-5 w-5"/></ToggleGroupItem>
                       </ToggleGroup>
                     </FormItem>
                   )}
