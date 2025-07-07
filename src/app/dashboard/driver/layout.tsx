@@ -27,7 +27,7 @@ import { Logo } from '@/components/logo'
 import { Button } from '@/components/ui/button'
 import { usePathname } from 'next/navigation'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
 const navItems = [
   { href: "/dashboard/driver", icon: LayoutGrid, label: "Painel" },
@@ -74,16 +74,16 @@ export default function DriverDashboardLayout({
                 return (
                   <SidebarMenuItem key={item.href}>
                     {isDisabled ? (
-                       <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger className="w-full cursor-not-allowed">
+                       <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="w-full cursor-not-allowed">
                             {menuButton}
-                          </TooltipTrigger>
-                          <TooltipContent side="right">
-                            <p>Funcionalidade exclusiva para assinantes VIP</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">
+                          <p>Funcionalidade exclusiva para assinantes VIP</p>
+                        </TooltipContent>
+                      </Tooltip>
                     ) : (
                       <Link href={item.href}>{menuButton}</Link>
                     )}
