@@ -2,7 +2,7 @@
 'use client'
 
 import React, { useState, useEffect } from "react";
-import { useForm, Controller, useFormContext } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { format } from "date-fns";
@@ -12,17 +12,17 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Separator } from "@/components/ui/separator";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 
 import {
-  Edit2, Calendar as CalendarIcon, Clock, Home, MapPin, Plus, Trash2, Fuel,
-  Wand2, Loader2, Compass, Minus, ChevronDown
+  Edit2, Calendar as CalendarIcon, Clock, Home, MapPin, Fuel,
+  Wand2, Loader2, ChevronDown
 } from 'lucide-react';
 
 const BrazilFlag = () => (
@@ -33,43 +33,14 @@ const BrazilFlag = () => (
   </svg>
 );
 
-const IconCar = (props: React.SVGProps<SVGSVGElement>) => (
+const IconAxle = (props: React.SVGProps<SVGSVGElement>) => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <path d="M19,17H5c-1.1,0-2-0.9-2-2V12c0-1.1,0.9-2,2-2h14c1.1,0,2,0.9,2,2v3C21,16.1,20.1,17,19,17z" />
-    <path d="M5,10L8,5h8l3,5" />
-    <circle cx="7.5" cy="17.5" r="1.5" />
-    <circle cx="16.5" cy="17.5" r="1.5" />
-  </svg>
-);
-
-const IconToco = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <rect x="2" y="9" width="14" height="9" rx="1" />
-    <path d="M16,9H20c1.1,0,2,0.9,2,2v3c0,1.1-0.9,2-2,2h-1" />
-    <path d="M6,9V6c0-1.1,0.9-2,2-2h3l2,2" />
-    <circle cx="6" cy="18" r="2" />
-    <circle cx="18" cy="18" r="2" />
-  </svg>
-);
-
-const IconTruck = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <rect x="2" y="7" width="16" height="11" rx="1" />
-    <path d="M18,7H21c0.6,0,1,0.4,1,1v8c0,0.6-0.4,1-1,1h-1" />
-    <circle cx="7" cy="18" r="2" />
-    <circle cx="18" cy="18" r="2" />
-    <path d="M18,12H22" />
-  </svg>
-);
-
-const IconCarreta = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <path d="M2,9h10v9H2V9z" />
-    <path d="M12,14H16c1.1,0,2-0.9,2-2V8c0-1.1-0.9-2-2-2h-1l-2,3" />
-    <path d="M21.5,14H22c0.6,0,1,0.4,1,1v1c0,0.6-0.4,1-1,1h-0.5" />
-    <circle cx="5" cy="18" r="1.5" />
-    <circle cx="9" cy="18" r="1.5" />
-    <circle cx="18" cy="18" r="1.5" />
+    <path d="M5 7h14" />
+    <path d="M5 17h14" />
+    <circle cx="6.5" cy="7" r="1.5" />
+    <circle cx="17.5" cy="7" r="1.5" />
+    <circle cx="6.5" cy="17" r="1.5" />
+    <circle cx="17.5" cy="17" r="1.5" />
   </svg>
 );
 
@@ -86,7 +57,7 @@ const formSchema = z.object({
   fuelCostPerLiter: z.coerce.number().min(0).default(5.80),
   fuelConsumption: z.coerce.number().min(0).default(2.5),
   vehicleType: vehicleTypeEnum.default('CARRETA'),
-  axleCount: z.coerce.number().min(2).max(9).default(5),
+  axleCount: z.coerce.number().min(1).max(15).default(2),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -108,7 +79,7 @@ export function RouteCalculatorModal({ isOpen, onOpenChange, onCalculate, isLoad
       originCity: "São Paulo, SP",
       destinationCity: "Rio de Janeiro, RJ",
       vehicleType: 'CARRETA',
-      axleCount: 5,
+      axleCount: 2,
       fuelCostPerLiter: 5.80,
       fuelConsumption: 2.5,
       ...initialData,
@@ -120,7 +91,7 @@ export function RouteCalculatorModal({ isOpen, onOpenChange, onCalculate, isLoad
       form.reset({
         fuelCostPerLiter: 5.80,
         fuelConsumption: 2.5,
-        axleCount: 5,
+        axleCount: 2,
         ...initialData
       });
     }
@@ -143,7 +114,7 @@ export function RouteCalculatorModal({ isOpen, onOpenChange, onCalculate, isLoad
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-7xl p-0">
+      <DialogContent className="max-w-4xl p-0">
         <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="flex">
@@ -205,7 +176,38 @@ export function RouteCalculatorModal({ isOpen, onOpenChange, onCalculate, isLoad
                       </div>
                      </FormItem>
                   )} />
-                  <VehiclePopoverSelector />
+                   <FormField
+                    control={form.control}
+                    name="axleCount"
+                    render={({ field }) => (
+                      <FormItem>
+                        <Select
+                          onValueChange={(value) => field.onChange(Number(value))}
+                          value={String(field.value)}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="h-14 w-36">
+                              <div className="flex w-full items-center gap-3">
+                                <IconAxle className="h-6 w-6 text-muted-foreground" />
+                                <div className="flex-1 text-left">
+                                  <p className="text-xs font-medium text-muted-foreground">Eixos</p>
+                                  <span className="font-semibold text-base text-foreground">{field.value}</span>
+                                </div>
+                              </div>
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {Array.from({ length: 15 }, (_, i) => i + 1).map((axle) => (
+                              <SelectItem key={axle} value={String(axle)}>
+                                {axle} eixo{axle > 1 ? 's' : ''}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
               </div>
             </div>
@@ -216,7 +218,6 @@ export function RouteCalculatorModal({ isOpen, onOpenChange, onCalculate, isLoad
                  <p className="text-xs text-muted-foreground mb-2">Traçar rota priorizando rodovias preferenciais para:</p>
                  <ToggleGroup type="single" defaultValue="economic" variant="outline" className="w-full justify-start">
                    <ToggleGroupItem value="economic">Econômica</ToggleGroupItem>
-                   <ToggleGroupItem value="fastest">Mais Rápida</ToggleGroupItem>
                  </ToggleGroup>
                </div>
 
@@ -271,87 +272,3 @@ const LocationInput = ({ icon, label, cityFieldName, addressFieldName }: {
     </div>
   </div>
 );
-
-const IconAxle = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <path d="M5 7h14" />
-    <path d="M5 17h14" />
-    <circle cx="6.5" cy="7" r="1.5" />
-    <circle cx="17.5" cy="7" r="1.5" />
-    <circle cx="6.5" cy="17" r="1.5" />
-    <circle cx="17.5" cy="17" r="1.5" />
-  </svg>
-);
-
-const vehicleCategories = [
-    { id: 'CAR', name: 'Passeio - Carro / Utilitários', icon: IconCar, defaultType: 'CAR', minAxles: 2, maxAxles: 2, description: 'Auto, Caminhonete, Furgão (Com/Sem Semi Reboque ou Reboque)'},
-    { id: 'TRUCK', name: 'Comercial', icon: IconToco, defaultType: 'TRUCK', minAxles: 2, maxAxles: 6, description: 'Caminhão Leve, Furgão, Caminhão (com/sem Reboque), Caminhão Trator (com/sem Semi Reboque)'},
-    { id: 'CARRETA', name: 'Comercial Pesado', icon: IconCarreta, defaultType: 'CARRETA_LS', minAxles: 2, maxAxles: 9, description: 'Semi-reboque, Bitrem, Rodotrem'},
-];
-
-function VehiclePopoverSelector() {
-    const { control, watch, setValue } = useFormContext<FormData>();
-    const vehicleType = watch('vehicleType');
-    const axleCount = watch('axleCount');
-
-    const handleAxleChange = (change: number) => {
-        const currentCategory = vehicleCategories.find(c => c.id === vehicleType) || vehicleCategories[1];
-        const newAxles = Math.max(currentCategory.minAxles, Math.min(currentCategory.maxAxles, axleCount + change));
-        setValue('axleCount', newAxles, { shouldValidate: true });
-    };
-
-    const handleCategorySelect = (category: typeof vehicleCategories[0]) => {
-        setValue('vehicleType', category.id as z.infer<typeof vehicleTypeEnum>);
-        if (axleCount < category.minAxles || axleCount > category.maxAxles) {
-            setValue('axleCount', category.minAxles);
-        }
-    }
-
-    const selectedCategory = vehicleCategories.find(c => c.id === vehicleType) || vehicleCategories[1];
-    const VehicleIcon = selectedCategory.icon;
-
-    return (
-        <Popover>
-            <PopoverTrigger asChild>
-                <Button variant="outline" className="h-14 w-48 justify-between px-3">
-                    <div className="flex items-center gap-2">
-                        <VehicleIcon className="h-8 w-8" />
-                        <div className="text-left">
-                            <p className="text-xs text-muted-foreground">Eixos</p>
-                            <p className="font-semibold">{axleCount}</p>
-                        </div>
-                    </div>
-                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-[450px] p-2">
-                <div className="space-y-1">
-                    {vehicleCategories.map(category => (
-                        <div key={category.id} 
-                             onClick={() => handleCategorySelect(category)}
-                             className={cn(
-                                "flex items-center gap-3 p-3 rounded-md cursor-pointer",
-                                vehicleType === category.id && "bg-muted"
-                             )}
-                        >
-                            <category.icon className="h-8 w-8 text-muted-foreground" />
-                            <div className="flex-grow">
-                                <p className="font-semibold">{category.name}</p>
-                                <p className="text-xs text-muted-foreground">{category.description}</p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <Button size="icon" variant="ghost" className="h-7 w-7 rounded-full" onClick={(e) => { e.stopPropagation(); setValue('axleCount', Math.max(category.minAxles, axleCount - 1)); setValue('vehicleType', category.id as any); }} disabled={axleCount <= category.minAxles}>
-                                    <Minus className="h-4 w-4" />
-                                </Button>
-                                <span className="font-bold w-4 text-center">{axleCount}</span>
-                                <Button size="icon" variant="ghost" className="h-7 w-7 rounded-full" onClick={(e) => { e.stopPropagation(); setValue('axleCount', Math.min(category.maxAxles, axleCount + 1)); setValue('vehicleType', category.id as any); }} disabled={axleCount >= category.maxAxles}>
-                                    <Plus className="h-4 w-4" />
-                                </Button>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </PopoverContent>
-        </Popover>
-    );
-}
