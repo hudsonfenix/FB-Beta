@@ -28,7 +28,7 @@ export default function CostCalculatorPage() {
       toast({
         variant: "destructive",
         title: "Erro ao calcular",
-        description: "Houve um problema ao se comunicar com o serviço de IA. Tente novamente.",
+        description: error instanceof Error ? error.message : "Houve um problema ao se comunicar com o serviço de IA. Tente novamente.",
       });
     } finally {
       setIsLoading(false);
@@ -70,8 +70,8 @@ export default function CostCalculatorPage() {
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="p-4 rounded-lg bg-muted">
-                        <div className="flex items-center gap-2 text-muted-foreground"><DollarSign className="h-4 w-4" /><span>Custo Estimado</span></div>
-                        <p className="text-3xl font-bold">R$ {result.estimatedCost.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                        <div className="flex items-center gap-2 text-muted-foreground"><DollarSign className="h-4 w-4" /><span>Custo Operacional Total</span></div>
+                        <p className="text-3xl font-bold">R$ {result.totalOperationalCost.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                     </div>
                      <div className="p-4 rounded-lg bg-muted">
                         <div className="flex items-center gap-2 text-muted-foreground"><Route className="h-4 w-4" /><span>Frete Mínimo (ANTT)</span></div>

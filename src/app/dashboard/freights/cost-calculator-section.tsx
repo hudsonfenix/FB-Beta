@@ -110,8 +110,7 @@ export function CostCalculatorSection({ freight }: { freight: Freight }) {
       toast({
         variant: 'destructive',
         title: 'Erro ao calcular',
-        description:
-          'Houve um problema ao se comunicar com o serviço de IA. Tente novamente.',
+        description: error instanceof Error ? error.message : "Houve um problema ao se comunicar com o serviço de IA. Tente novamente.",
       });
     } finally {
       setIsLoading(false);

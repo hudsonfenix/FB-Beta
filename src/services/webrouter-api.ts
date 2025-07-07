@@ -17,8 +17,9 @@ type RouteInfoParams = {
 
 export async function getRouteInfo(params: RouteInfoParams): Promise<{ distance: number; toll: number }> {
     const apiKey = process.env.ROUTER_API_KEY;
-    if (!apiKey) {
-        throw new Error("ROUTER_API_KEY is not set in environment variables.");
+    if (!apiKey || apiKey === "YOUR_API_KEY_HERE") {
+        console.error("ROUTER_API_KEY is not set in environment variables.");
+        throw new Error("A chave da API (ROUTER_API_KEY) não está configurada no arquivo .env.");
     }
 
     const apiUrl = 'https://lway.webrouter.com.br/RouterService/router/api/calcular';
@@ -53,9 +54,7 @@ export async function getRouteInfo(params: RouteInfoParams): Promise<{ distance:
         }
 
         const data = await response.json();
-
-        // Assuming the API response has these fields based on a typical routing service.
-        // This may need adjustment based on the actual API documentation.
+        
         const distance = data.distancia_total_km || 0;
         const toll = data.custo_total_pedagio || 0;
         
@@ -63,7 +62,7 @@ export async function getRouteInfo(params: RouteInfoParams): Promise<{ distance:
 
     } catch (error) {
         console.error("Error calling Webrouter API:", error);
-        // Fallback to avoid complete failure. Could also re-throw the error.
-        return { distance: 0, toll: 0 };
+        // Re-throw the error so it can be handled by the caller.
+        throw new Error('Failed to communicate with Webrouter API.');
     }
 }
