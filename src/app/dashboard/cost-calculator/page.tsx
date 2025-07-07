@@ -25,7 +25,6 @@ const formSchema = z.object({
   origin: z.string().min(2, "Origem é obrigatória."),
   destination: z.string().min(2, "Destino é obrigatório."),
   vehicleType: vehicleTypeEnum,
-  tollCostPerAxle: z.coerce.number().min(0, "Custo do pedágio deve ser positivo."),
   fuelCostPerLiter: z.coerce.number().min(0, "Custo do combustível deve ser positivo."),
   fuelConsumption: z.coerce.number().min(0, "Consumo de combustível deve ser positivo."),
   cargoValue: z.coerce.number().min(0, "Valor da carga deve ser positivo."),
@@ -46,7 +45,6 @@ export default function CostCalculatorPage() {
       origin: "São Paulo, SP",
       destination: "Rio de Janeiro, RJ",
       vehicleType: 'CARRETA',
-      tollCostPerAxle: 10.50,
       fuelCostPerLiter: 5.80,
       fuelConsumption: 2.5,
       cargoValue: 100000,
@@ -105,9 +103,6 @@ export default function CostCalculatorPage() {
                       </Select>
                       <FormMessage />
                     </FormItem>
-                  )} />
-                  <FormField control={form.control} name="tollCostPerAxle" render={({ field }) => (
-                    <FormItem><FormLabel>Custo do Pedágio por Eixo</FormLabel><FormControl><Input type="number" step="0.01" {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <FormField control={form.control} name="fuelCostPerLiter" render={({ field }) => (
                     <FormItem><FormLabel>Custo do Combustível por Litro</FormLabel><FormControl><Input type="number" step="0.01" {...field} /></FormControl><FormMessage /></FormItem>
