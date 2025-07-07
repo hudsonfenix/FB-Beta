@@ -1,6 +1,7 @@
+
 'use client'
 
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -54,21 +55,33 @@ interface RouteCalculatorModalProps {
   onOpenChange: (isOpen: boolean) => void;
   onCalculate: (data: any) => void;
   isLoading: boolean;
+  initialData?: Partial<FormData>;
 }
 
-export function RouteCalculatorModal({ isOpen, onOpenChange, onCalculate, isLoading }: RouteCalculatorModalProps) {
+export function RouteCalculatorModal({ isOpen, onOpenChange, onCalculate, isLoading, initialData }: RouteCalculatorModalProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      originCity: "São Paulo, SP",
-      destinationCity: "Rio de Janeiro, RJ",
-      vehicleType: 'CARRETA',
+      originCity: initialData?.originCity || "São Paulo, SP",
+      destinationCity: initialData?.destinationCity || "Rio de Janeiro, RJ",
+      vehicleType: initialData?.vehicleType || 'CARRETA',
       fuelCostPerLiter: 5.80,
       fuelConsumption: 2.5,
+      ...initialData,
     },
   });
+  
+  useEffect(() => {
+    if (initialData) {
+      form.reset({
+        fuelCostPerLiter: 5.80,
+        fuelConsumption: 2.5,
+        ...initialData
+      });
+    }
+  }, [initialData, form, isOpen]);
 
   const onSubmit = (values: FormData) => {
     const apiInput = {
