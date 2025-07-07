@@ -1,6 +1,11 @@
+'use client'
+
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowRight, Truck, Calculator, BarChartHorizontal } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { ArrowRight, Truck, Calculator, BarChartHorizontal, Search } from 'lucide-react'
 import Link from 'next/link'
 
 const stats = [
@@ -8,12 +13,44 @@ const stats = [
   { name: 'Sua Avaliação', value: '4.9/5', icon: BarChartHorizontal },
 ]
 
+function DestinationSearchForm() {
+  const [destination, setDestination] = useState('')
+  const router = useRouter()
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (destination.trim()) {
+      router.push(`/dashboard/driver/freights?destination=${encodeURIComponent(destination.trim())}`)
+    } else {
+      router.push('/dashboard/driver/freights')
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="relative max-w-xl">
+      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+      <Input
+        type="text"
+        placeholder="Digite a cidade de destino e pressione Enter"
+        value={destination}
+        onChange={(e) => setDestination(e.target.value)}
+        className="h-14 pl-12 pr-4 text-base"
+      />
+    </form>
+  )
+}
+
 export default function DriverDashboardPage() {
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold font-headline">Bem-vindo de volta, José!</h1>
         <p className="text-muted-foreground">Pronto para a próxima viagem?</p>
+      </div>
+
+      <div className="space-y-4 rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+        <h2 className="text-2xl font-semibold font-headline tracking-tight">Para onde deseja ir?</h2>
+        <DestinationSearchForm />
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
