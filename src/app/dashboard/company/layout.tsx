@@ -1,0 +1,143 @@
+'use client'
+import * as React from 'react'
+import Link from 'next/link'
+import {
+  LogOut,
+  User,
+  ChevronDown,
+  LayoutGrid,
+  PlusCircle,
+  Package,
+  Settings,
+  HelpCircle,
+  Truck,
+  Calculator
+} from 'lucide-react'
+import {
+  Sidebar,
+  SidebarProvider,
+  SidebarTrigger,
+  SidebarHeader,
+  SidebarContent,
+  SidebarFooter,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+} from '@/components/ui/sidebar'
+import { Logo } from '@/components/logo'
+import { Button } from '@/components/ui/button'
+import { usePathname } from 'next/navigation'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+
+const navItems = [
+  { href: "/dashboard/company", icon: LayoutGrid, label: "Painel" },
+  { href: "/dashboard/company/post-freight", icon: PlusCircle, label: "Cadastrar Fretes" },
+  { href: "/dashboard/company/my-freights", icon: Package, label: "Meus Fretes" },
+  { href: "/dashboard/company/freights", icon: Truck, label: "Ver todos os fretes" },
+  { href: "/dashboard/company/cost-calculator", icon: Calculator, label: "Calculadora de Custo" },
+];
+
+const helpNavItems = [
+    { href: "/dashboard/company/settings", icon: Settings, label: "Configurações" },
+    { href: "/dashboard/company/help", icon: HelpCircle, label: "Ajuda" },
+];
+
+export default function CompanyDashboardLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  const pathname = usePathname()
+  
+  const isActive = (path: string) => {
+    return pathname === path
+  }
+
+  return (
+    <SidebarProvider>
+      <div className="flex min-h-svh">
+        <Sidebar>
+          <SidebarHeader>
+            <Logo />
+          </SidebarHeader>
+          <SidebarContent>
+            <SidebarMenu>
+              {navItems.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                  <Link href={item.href}>
+                    <SidebarMenuButton isActive={isActive(item.href)}>
+                      <item.icon className="h-4 w-4" />
+                      {item.label}
+                    </SidebarMenuButton>
+                  </Link>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarContent>
+          <SidebarFooter>
+             <SidebarMenu>
+                {helpNavItems.map((item) => (
+                    <SidebarMenuItem key={item.href}>
+                        <Link href={item.href}>
+                            <SidebarMenuButton isActive={isActive(item.href)}>
+                                <item.icon className="h-4 w-4" />
+                                {item.label}
+                            </SidebarMenuButton>
+                        </Link>
+                    </SidebarMenuItem>
+                ))}
+            </SidebarMenu>
+          </SidebarFooter>
+        </Sidebar>
+
+        <div className="flex flex-col flex-1">
+          <header className="sticky top-0 z-40 w-full border-b bg-card">
+            <div className="relative flex h-16 items-center justify-between px-4 md:px-6">
+              <div className="flex items-center gap-4">
+                <div className="md:hidden">
+                  <SidebarTrigger />
+                </div>
+              </div>
+              
+              <nav className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-6 text-sm font-medium md:flex">
+                {/* Top nav can be added here if needed */}
+              </nav>
+
+              <div className="flex items-center ml-auto">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="flex items-center gap-2">
+                      <User className="h-5 w-5 text-muted-foreground" />
+                      <span className="hidden md:inline">Olá, José da Silva</span>
+                      <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuLabel>Minha Conta (Empresa)</DropdownMenuLabel>
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard/company">Dashboard</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard/company/settings">Configurações</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link href="/">
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Sair
+                      </Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+
+            </div>
+          </header>
+          <main className="flex-1 p-4 md:p-6">
+              {children}
+          </main>
+        </div>
+      </div>
+    </SidebarProvider>
+  )
+}

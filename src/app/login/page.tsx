@@ -1,3 +1,6 @@
+'use client'
+
+import { useState } from 'react'
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -8,6 +11,14 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Logo } from "@/components/logo"
 
 export default function LoginPage() {
+  const [activeTab, setActiveTab] = useState("motorista");
+
+  const dashboardPaths = {
+    motorista: "/dashboard/driver",
+    transportador: "/dashboard/company",
+    agenciador: "/dashboard/agent",
+  }
+
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="w-full max-w-md space-y-4">
@@ -20,20 +31,20 @@ export default function LoginPage() {
             <CardDescription>Acesse sua conta para continuar.</CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="motorista" className="w-full">
+            <Tabs defaultValue="motorista" onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="motorista">Motorista</TabsTrigger>
                 <TabsTrigger value="transportador">Transportador</TabsTrigger>
                 <TabsTrigger value="agenciador">Agenciador</TabsTrigger>
               </TabsList>
               <TabsContent value="motorista">
-                <LoginForm loginType="CPF" />
+                <LoginForm loginType="CPF" dashboardPath={dashboardPaths.motorista} />
               </TabsContent>
               <TabsContent value="transportador">
-                <LoginForm loginType="CNPJ" />
+                <LoginForm loginType="CNPJ" dashboardPath={dashboardPaths.transportador} />
               </TabsContent>
               <TabsContent value="agenciador">
-                <LoginForm loginType="CNPJ" />
+                <LoginForm loginType="CNPJ" dashboardPath={dashboardPaths.agenciador} />
               </TabsContent>
             </Tabs>
             <div className="mt-4 text-center text-sm">
@@ -49,7 +60,7 @@ export default function LoginPage() {
   )
 }
 
-function LoginForm({ loginType }: { loginType: 'CPF' | 'CNPJ' }) {
+function LoginForm({ loginType, dashboardPath }: { loginType: 'CPF' | 'CNPJ', dashboardPath: string }) {
   const isCpf = loginType === 'CPF';
   const label = isCpf ? "CPF" : "CNPJ";
   const placeholder = isCpf ? "000.000.000-00" : "00.000.000/0000-00";
@@ -80,7 +91,7 @@ function LoginForm({ loginType }: { loginType: 'CPF' | 'CNPJ' }) {
         </label>
       </div>
       <Button type="submit" className="w-full" asChild>
-        <Link href="/dashboard">Entrar</Link>
+        <Link href={dashboardPath}>Entrar</Link>
       </Button>
       <Button variant="outline" className="w-full">
         Preciso de ajuda

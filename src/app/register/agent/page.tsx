@@ -17,7 +17,7 @@ export default function AgentRegisterPage() {
     useEffect(() => {
         if (submitted) {
             const timer = setTimeout(() => {
-                router.push('/dashboard');
+                router.push('/dashboard/agent');
             }, 3000);
             return () => clearTimeout(timer);
         }
@@ -43,7 +43,7 @@ export default function AgentRegisterPage() {
                     </CardHeader>
                     <CardContent>
                         <Button asChild className="w-full">
-                            <Link href="/dashboard">Ir para o Painel</Link>
+                            <Link href="/dashboard/agent">Ir para o Painel</Link>
                         </Button>
                     </CardContent>
                 </Card>

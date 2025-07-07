@@ -17,7 +17,7 @@ export default function CompanyRegisterPage() {
     useEffect(() => {
         if (submitted) {
             const timer = setTimeout(() => {
-                router.push('/dashboard');
+                router.push('/dashboard/company');
             }, 3000);
             return () => clearTimeout(timer);
         }
@@ -43,7 +43,7 @@ export default function CompanyRegisterPage() {
                     </CardHeader>
                     <CardContent>
                         <Button asChild className="w-full">
-                            <Link href="/dashboard">Ir para o Painel</Link>
+                            <Link href="/dashboard/company">Ir para o Painel</Link>
                         </Button>
                     </CardContent>
                 </Card>

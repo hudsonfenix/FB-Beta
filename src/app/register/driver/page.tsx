@@ -36,7 +36,7 @@ export default function DriverRegisterPage() {
   useEffect(() => {
     if (submitted) {
         const timer = setTimeout(() => {
-            router.push('/dashboard');
+            router.push('/dashboard/driver');
         }, 3000);
         return () => clearTimeout(timer);
     }
@@ -67,7 +67,7 @@ export default function DriverRegisterPage() {
                 </CardHeader>
                 <CardContent>
                     <Button asChild className="w-full">
-                        <Link href="/dashboard">Ir para o Painel</Link>
+                        <Link href="/dashboard/driver">Ir para o Painel</Link>
                     </Button>
                 </CardContent>
             </Card>
