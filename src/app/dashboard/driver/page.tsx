@@ -17,8 +17,7 @@ function DestinationSearchForm() {
   const [destination, setDestination] = useState('')
   const router = useRouter()
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  const handleSearch = () => {
     if (destination.trim()) {
       router.push(`/dashboard/driver/freights?destination=${encodeURIComponent(destination.trim())}`)
     } else {
@@ -26,17 +25,31 @@ function DestinationSearchForm() {
     }
   }
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      handleSearch()
+    }
+  }
+
   return (
-    <form onSubmit={handleSubmit} className="relative max-w-xl">
-      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-      <Input
-        type="text"
-        placeholder="Digite a cidade de destino e pressione Enter"
-        value={destination}
-        onChange={(e) => setDestination(e.target.value)}
-        className="h-14 pl-12 pr-4 text-base"
-      />
-    </form>
+    <div className="flex max-w-xl items-center gap-2">
+      <div className="relative flex-grow">
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+        <Input
+          type="text"
+          placeholder="Digite a cidade de destino..."
+          value={destination}
+          onChange={(e) => setDestination(e.target.value)}
+          onKeyDown={handleKeyDown}
+          className="h-14 pl-12 pr-4 text-base"
+        />
+      </div>
+      <Button onClick={handleSearch} size="lg" className="h-14 shrink-0 px-5">
+        <Search className="h-5 w-5 sm:hidden" />
+        <span className="hidden sm:inline">Buscar</span>
+      </Button>
+    </div>
   )
 }
 
