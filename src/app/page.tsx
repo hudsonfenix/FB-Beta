@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -63,40 +63,37 @@ const HeroSection = () => (
         </div>
         <Card className="shadow-2xl">
           <CardHeader>
-            <CardTitle>Cadastre sua empresa</CardTitle>
+            <CardTitle>Crie sua conta gratuita</CardTitle>
+            <CardDescription>Escolha seu perfil e comece agora mesmo.</CardDescription>
           </CardHeader>
-          <CardContent>
-            <form className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Nome</Label>
-                <Input id="name" placeholder="Sua Empresa LTDA" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">E-mail comercial</Label>
-                <Input id="email" type="email" placeholder="contato@suaempresa.com" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="whatsapp">Whatsapp</Label>
-                <Input id="whatsapp" placeholder="(XX) XXXXX-XXXX" />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="cnpj">CNPJ</Label>
-                  <Input id="cnpj" placeholder="00.000.000/0000-00" />
+          <CardContent className="space-y-4">
+            <Link href="/register/company" className="block">
+              <Button variant="outline" className="w-full justify-start h-auto p-4 text-left">
+                <Building className="mr-4 h-8 w-8 text-primary flex-shrink-0" />
+                <div>
+                  <p className="font-semibold text-base">Empresa</p>
+                  <p className="text-sm font-normal text-muted-foreground">Quero anunciar minhas cargas.</p>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="birthdate">Data de nascimento</Label>
-                  <Input id="birthdate" type="date" />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Senha</Label>
-                <Input id="password" type="password" />
-              </div>
-              <Button type="submit" className="w-full">
-                Criar conta
               </Button>
-            </form>
+            </Link>
+            <Link href="/register/driver" className="block">
+              <Button variant="outline" className="w-full justify-start h-auto p-4 text-left">
+                <Truck className="mr-4 h-8 w-8 text-primary flex-shrink-0" />
+                <div>
+                  <p className="font-semibold text-base">Caminhoneiro</p>
+                  <p className="text-sm font-normal text-muted-foreground">Quero encontrar fretes.</p>
+                </div>
+              </Button>
+            </Link>
+            <Link href="/register/agent" className="block">
+              <Button variant="outline" className="w-full justify-start h-auto p-4 text-left">
+                <Briefcase className="mr-4 h-8 w-8 text-primary flex-shrink-0" />
+                <div>
+                  <p className="font-semibold text-base">Agenciador</p>
+                  <p className="text-sm font-normal text-muted-foreground">Quero agenciar fretes.</p>
+                </div>
+              </Button>
+            </Link>
           </CardContent>
         </Card>
       </div>
